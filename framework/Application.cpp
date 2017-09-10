@@ -7,20 +7,28 @@
 int onyx::Application::m_socket_id;
 std::vector<std::thread> onyx::Application::m_threads;
 std::mutex onyx::Application::m_mutex_class;
-plog::RollingFileAppender<plog::TxtFormatter> onyx::Application::m_file_log_appender("/var/log/onyx/onyx-app-example/log", 10000000, 10);
+std::unique_ptr<plog::RollingFileAppender<plog::TxtFormatter>> onyx::Application::m_file_log_appender(nullptr);
 plog::ColorConsoleAppender<plog::TxtFormatter> onyx::Application::m_console_log_appender;
 
-std::string onyx::Application::m_socket_path = "/tmp/onyx-app-example.sock";
+std::string onyx::Application::m_socket_path;
+std::string onyx::Application::m_log_file_path;
 size_t onyx::Application::m_thread_count = 8;
 
 void onyx::Application::run() {
-    plog::init(plog::debug, &m_file_log_appender).addAppender(&m_console_log_appender);
+    setConfig("settings.json");
+    if (m_log_file_path != "")
+        m_file_log_appender = std::move(std::unique_ptr<plog::RollingFileAppender<plog::TxtFormatter>>(new plog::RollingFileAppender<plog::TxtFormatter>(m_log_file_path.c_str(), 10000000, 10)));
+    plog::init(plog::debug, m_file_log_appender.get()).addAppender(&m_console_log_appender);
+    if (m_socket_path == "") {
+        LOGE << "undefined unix socket file. Application stoped";
+        exit(EXIT_FAILURE);
+    }
     FCGX_Init();
     m_socket_id = FCGX_OpenSocket(m_socket_path.c_str(), 32);
-    char buf[80];
+    char buf[1024];
     snprintf(buf, sizeof (buf), "chmod a+w %s", m_socket_path.c_str());
     int res = system(buf);
-    if(res != 0 ){
+    if (res != 0) {
         LOGE << "Error change mode access to socket file";
         exit(EXIT_FAILURE);
     }
@@ -28,13 +36,13 @@ void onyx::Application::run() {
         LOGE << "Error create socket";
         exit(EXIT_FAILURE);
     }
-    LOGI << "ONYX started success"; 
+    LOGI << "ONYX started success";
     for (size_t i = 0; i < m_thread_count; i++)
         m_threads.push_back(std::thread(handler));
-    
+
     for (auto& thread : m_threads)
         thread.join();
-    
+
 }
 
 void onyx::Application::handler() {
@@ -57,28 +65,53 @@ void onyx::Application::handler() {
         const char * request_cookie = FCGX_GetParam("HTTP_COOKIE", request.envp);
         char * content_length_str = FCGX_GetParam("CONTENT_LENGTH", request.envp);
         size_t content_length = strtol(content_length_str, &content_length_str, 10);
-        
+
         onyx::Request onyx_request;
-                
+
         if (content_length > 0) {
-            std::unique_ptr<char[]> buffer(new char[content_length + 1]);
+            std::unique_ptr<char[] > buffer(new char[content_length + 1]);
             FCGX_GetStr(buffer.get(), content_length, request.in);
             onyx_request.setBody(buffer.get());
         }
-        if(request_cookie)
+        if (request_cookie)
             onyx_request.parse_cookie(request_cookie);
         onyx_request.setUrl(request_url);
         onyx_request.setIp(request_ip_address);
         onyx_request.setMethod(request_method);
         onyx_request.parse_tokens_queries(FCGX_GetParam("QUERY_STRING", request.envp));
-         
-        onyx::JsonResponse response("{\"ups\" : 123}");        
+
+        onyx::JsonResponse response("{\"ups\" : 123}");
         FCGX_PutS(response.getResponse().c_str(), request.out);
         FCGX_Finish_r(&request);
     }
     return;
 }
 
-void onyx::Application::setConfig(const std::string & config) {
-    
+void onyx::Application::setConfig(const std::string & path_config_file) {
+    FILE* f = fopen(path_config_file.c_str(), "r");
+    if (f == NULL) {
+        printf("%s\n", "Error open configuration file. Application stopped");
+        exit(EXIT_FAILURE);
+    }
+    std::string data;
+    char buffer[1000];
+    memset(buffer, '\0', sizeof (buffer));
+    while (fgets(buffer, sizeof (buffer), f) != NULL) {
+        data += std::string(buffer);
+        memset(buffer, '\0', sizeof (buffer));
+    }
+    fclose(f);
+    json settings;
+    try {
+        settings = json::parse(data);
+        if (settings.find("unix_socket") != settings.end())
+            m_socket_path = settings["unix_socket"].get<std::string>();
+        if (settings.find("log") != settings.end())
+            m_log_file_path = settings["log"].get<std::string>();
+        if (settings.find("threads") != settings.end())
+            m_thread_count = settings["threads"].get<int>();
+    } catch (...) {
+        printf("%s\n", "Неверный формат конфигурационного файла. Application stopped");
+        exit(EXIT_FAILURE);
+    }
 }
