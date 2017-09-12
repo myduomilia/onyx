@@ -5,12 +5,15 @@
 
 
 namespace onyx {
+
     class JsonResponse : public BaseResponse {
     public:
-        JsonResponse(std::string m_body) : BaseResponse(m_body) {
-            setHeader("Content-type: application/json; charset=utf-8\r\n\r\n");
-        }
 
+        explicit JsonResponse(std::string body) :
+        BaseResponse("Content-type: application/json; charset=utf-8\r\n\r\n") {
+            m_body = body;
+        }
+         
     };
 }
 

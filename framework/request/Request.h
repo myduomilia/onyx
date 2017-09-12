@@ -62,6 +62,10 @@ namespace onyx {
         std::string getUrl() const {
             return m_url;
         }
+        
+        std::string getMethod() const {
+            return m_method;
+        }
 
     };
 }

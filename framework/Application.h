@@ -19,6 +19,7 @@
 #include "common/plog/Log.h"
 #include "common/plog/Appenders/ColorConsoleAppender.h"
 #include "common/json/json.hpp"
+#include "dispatcher/Dispatcher.h"
 
 using json = nlohmann::json;
 
@@ -29,6 +30,9 @@ namespace onyx {
         
         static int m_socket_id;
         static std::vector<std::thread> m_threads;
+        
+        static Dispatcher m_dispatcher;
+        
         static std::mutex m_mutex_class;
         static std::unique_ptr<plog::RollingFileAppender<plog::TxtFormatter>> m_file_log_appender;
         static plog::ColorConsoleAppender<plog::TxtFormatter> m_console_log_appender;
@@ -44,6 +48,11 @@ namespace onyx {
         static size_t m_thread_count;
         
         static void run();
+        static Dispatcher & getDispatcher() {
+            return m_dispatcher;
+        }
+
+ 
     };
 }
 

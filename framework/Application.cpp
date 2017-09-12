@@ -3,9 +3,13 @@
 #include "Application.h"
 #include "request/Request.h"
 #include "response/JsonResponse.h"
+#include "dispatcher/Dispatcher.h"
 
 int onyx::Application::m_socket_id;
 std::vector<std::thread> onyx::Application::m_threads;
+
+onyx::Dispatcher onyx::Application::m_dispatcher;
+
 std::mutex onyx::Application::m_mutex_class;
 std::unique_ptr<plog::RollingFileAppender<plog::TxtFormatter>> onyx::Application::m_file_log_appender(nullptr);
 plog::ColorConsoleAppender<plog::TxtFormatter> onyx::Application::m_console_log_appender;
@@ -37,6 +41,7 @@ void onyx::Application::run() {
         exit(EXIT_FAILURE);
     }
     LOGI << "ONYX started success";
+    
     for (size_t i = 0; i < m_thread_count; i++)
         m_threads.push_back(std::thread(handler));
 
@@ -79,9 +84,14 @@ void onyx::Application::handler() {
         onyx_request.setIp(request_ip_address);
         onyx_request.setMethod(request_method);
         onyx_request.parse_tokens_queries(FCGX_GetParam("QUERY_STRING", request.envp));
-
-        onyx::JsonResponse response("{\"ups\" : 123}");
-        FCGX_PutS(response.getResponse().c_str(), request.out);
+        
+        try {
+            std::string response_str = m_dispatcher.getResponseStr(onyx_request);
+            FCGX_PutS(response_str.c_str(), request.out);
+            LOGI << "Request " << onyx_request.getUrl() << " processed";
+        } catch (std::exception & ex){
+            LOGE << ex.what();
+        }
         FCGX_Finish_r(&request);
     }
     return;

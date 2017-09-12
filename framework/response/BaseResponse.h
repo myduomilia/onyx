@@ -4,23 +4,22 @@
 namespace onyx {
 
     class BaseResponse {
-    private:
+    protected:
         std::string m_header;
         std::string m_body;
     public:
 
-        BaseResponse(std::string m_body) :
-        m_body(m_body) {
+        explicit BaseResponse(const char * header) :
+        m_header(header), m_body() {
         }
 
-        std::string getResponse() const noexcept {
+        std::string getResponseStr() const noexcept {
             return m_header + m_body;
         }
-        
-        void setHeader(const std::string & header) {
-            m_header = header;
+         
+        operator std::string(){
+            return m_header + m_body;
         }
-
 
     };
 }

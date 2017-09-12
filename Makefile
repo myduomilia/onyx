@@ -3,7 +3,8 @@ CFLAGS = -c -Wall -std=c++14 -fPIC
 LDFLAGS = -lfcgi -lpthread -lcurl
 
 SOURCES = framework/Application.cpp\
-    framework/request/Request.cpp
+    framework/request/Request.cpp\
+    framework/dispatcher/Dispatcher.cpp
 	
 OBJECTS = $(SOURCES:.cpp=.o)
 EXECUTABLE = onyx
@@ -22,16 +23,19 @@ clean:
 create_required_dirs:
 	@if [ ! -d build ]; then mkdir build; fi
 
-OWNER_USER = myduomilia
-
 install:
 	cp build/libonyx.so /usr/lib/
 	@if [ ! -d /usr/include/onyx ]; then mkdir /usr/include/onyx; fi
+	@if [ ! -d /usr/include/onyx/dispatcher ]; then mkdir /usr/include/onyx/dispatcher; fi
+	@if [ ! -d /usr/include/onyx/request ]; then mkdir /usr/include/onyx/request; fi
+	@if [ ! -d /usr/include/onyx/response ]; then mkdir /usr/include/onyx/response; fi
 	@if [ ! -d /var/log/onyx ]; then mkdir /var/log/onyx; fi
 	cp framework/Application.h /usr/include/onyx/
-	cp framework/request/Request.h /usr/include/onyx/
-	cp framework/response/BaseResponse.h /usr/include/onyx/
-	cp framework/response/JsonResponse.h /usr/include/onyx/
+	cp framework/dispatcher/Dispatcher.h /usr/include/onyx/dispatcher/
+	cp framework/request/Request.h /usr/include/onyx/request/
+	cp framework/response/BaseResponse.h /usr/include/onyx/response/
+	cp framework/response/JsonResponse.h /usr/include/onyx/response/
+	cp framework/response/HtmlResponse.h /usr/include/onyx/response/
 	cp -r framework/common /usr/include/onyx/
 	sudo ldconfig
 	
