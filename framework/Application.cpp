@@ -121,7 +121,7 @@ void onyx::Application::setConfig(const std::string & path_config_file) {
         if (settings.find("threads") != settings.end())
             m_thread_count = settings["threads"].get<int>();
     } catch (...) {
-        printf("%s\n", "Неверный формат конфигурационного файла. Application stopped");
+        printf("%s\n", "Invalid format configuration file. Application stopped");
         exit(EXIT_FAILURE);
     }
 }
