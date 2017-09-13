@@ -7,6 +7,8 @@
 #include "../request/Request.h"
 #include "../common/plog/Log.h"
 #include "../response/BaseResponse.h"
+#include "../exception/Exception.h"
+#include <exception>
 
 namespace onyx {
     class Dispatcher {

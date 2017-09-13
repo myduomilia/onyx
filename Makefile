@@ -27,11 +27,13 @@ install:
 	cp build/libonyx.so /usr/lib/
 	@if [ ! -d /usr/include/onyx ]; then mkdir /usr/include/onyx; fi
 	@if [ ! -d /usr/include/onyx/dispatcher ]; then mkdir /usr/include/onyx/dispatcher; fi
+	@if [ ! -d /usr/include/onyx/exception ]; then mkdir /usr/include/onyx/exception; fi
 	@if [ ! -d /usr/include/onyx/request ]; then mkdir /usr/include/onyx/request; fi
 	@if [ ! -d /usr/include/onyx/response ]; then mkdir /usr/include/onyx/response; fi
 	@if [ ! -d /var/log/onyx ]; then mkdir /var/log/onyx; fi
 	cp framework/Application.h /usr/include/onyx/
 	cp framework/dispatcher/Dispatcher.h /usr/include/onyx/dispatcher/
+	cp framework/exception/Exception.h /usr/include/onyx/exception/
 	cp framework/request/Request.h /usr/include/onyx/request/
 	cp framework/response/BaseResponse.h /usr/include/onyx/response/
 	cp framework/response/JsonResponse.h /usr/include/onyx/response/

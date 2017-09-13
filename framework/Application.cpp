@@ -89,7 +89,7 @@ void onyx::Application::handler() {
             std::string response_str = m_dispatcher.getResponseStr(onyx_request);
             FCGX_PutS(response_str.c_str(), request.out);
             LOGI << "Request " << onyx_request.getUrl() << " processed";
-        } catch (std::exception & ex){
+        } catch (onyx::Exception & ex){
             LOGE << ex.what();
         }
         FCGX_Finish_r(&request);

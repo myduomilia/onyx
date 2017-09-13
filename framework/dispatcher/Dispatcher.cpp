@@ -1,3 +1,5 @@
+#include <exception>
+
 #include "Dispatcher.h"
 
 void onyx::Dispatcher::addRoute(const std::string& method, const std::string& regex, std::function<std::string() > function) noexcept {
@@ -34,5 +36,5 @@ std::string onyx::Dispatcher::getResponseStr(const onyx::Request & request) cons
             }
         }
     }
-    throw std::invalid_argument("Request " + request.getUrl() + " cannot process");
+    throw onyx::Exception("Request " + request.getUrl() + " cannot process");
 }
