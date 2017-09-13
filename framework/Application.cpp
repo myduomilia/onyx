@@ -21,7 +21,7 @@ size_t onyx::Application::m_thread_count = 8;
 void onyx::Application::run() {
     setConfig("settings.json");
     if (m_log_file_path != "")
-        m_file_log_appender = std::move(std::unique_ptr<plog::RollingFileAppender<plog::TxtFormatter>>(new plog::RollingFileAppender<plog::TxtFormatter>(m_log_file_path.c_str(), 10000000, 10)));
+        m_file_log_appender = std::unique_ptr<plog::RollingFileAppender<plog::TxtFormatter>>(new plog::RollingFileAppender<plog::TxtFormatter>(m_log_file_path.c_str(), 10000000, 10));
     plog::init(plog::debug, m_file_log_appender.get()).addAppender(&m_console_log_appender);
     if (m_socket_path == "") {
         LOGE << "undefined unix socket file. Application stoped";
