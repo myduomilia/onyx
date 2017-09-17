@@ -4,7 +4,9 @@ LDFLAGS = -lfcgi -lpthread -lcurl
 
 SOURCES = framework/Application.cpp\
     framework/request/Request.cpp\
-    framework/dispatcher/Dispatcher.cpp
+    framework/dispatcher/Dispatcher.cpp\
+    framework/token/Token.cpp\
+    framework/object/ONObject.cpp
 	
 OBJECTS = $(SOURCES:.cpp=.o)
 EXECUTABLE = onyx
@@ -30,6 +32,8 @@ install:
 	@if [ ! -d /usr/include/onyx/exception ]; then mkdir /usr/include/onyx/exception; fi
 	@if [ ! -d /usr/include/onyx/request ]; then mkdir /usr/include/onyx/request; fi
 	@if [ ! -d /usr/include/onyx/response ]; then mkdir /usr/include/onyx/response; fi
+	@if [ ! -d /usr/include/onyx/token ]; then mkdir /usr/include/onyx/token; fi
+	@if [ ! -d /usr/include/onyx/object ]; then mkdir /usr/include/onyx/object; fi
 	@if [ ! -d /var/log/onyx ]; then mkdir /var/log/onyx; fi
 	cp framework/Application.h /usr/include/onyx/
 	cp framework/dispatcher/Dispatcher.h /usr/include/onyx/dispatcher/
@@ -38,6 +42,8 @@ install:
 	cp framework/response/BaseResponse.h /usr/include/onyx/response/
 	cp framework/response/JsonResponse.h /usr/include/onyx/response/
 	cp framework/response/HtmlResponse.h /usr/include/onyx/response/
+	cp framework/token/Token.h /usr/include/onyx/token/
+	cp framework/object/ONObject.h /usr/include/onyx/object/
 	cp -r framework/common /usr/include/onyx/
 	sudo ldconfig
 	

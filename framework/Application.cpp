@@ -8,7 +8,7 @@
 int onyx::Application::m_socket_id;
 std::vector<std::thread> onyx::Application::m_threads;
 
-onyx::Dispatcher onyx::Application::m_dispatcher;
+std::shared_ptr<onyx::Dispatcher> onyx::Application::m_dispatcher(new onyx::Dispatcher);
 
 std::mutex onyx::Application::m_mutex_class;
 std::unique_ptr<plog::RollingFileAppender<plog::TxtFormatter>> onyx::Application::m_file_log_appender(nullptr);
@@ -84,9 +84,8 @@ void onyx::Application::handler() {
         onyx_request.setIp(request_ip_address);
         onyx_request.setMethod(request_method);
         onyx_request.parse_tokens_queries(FCGX_GetParam("QUERY_STRING", request.envp));
-        
         try {
-            std::string response_str = m_dispatcher.getResponseStr(onyx_request);
+            std::string response_str = m_dispatcher->getResponseStr(onyx_request);
             FCGX_PutS(response_str.c_str(), request.out);
             LOGI << "Request " << onyx_request.getUrl() << " processed";
         } catch (onyx::Exception & ex){
