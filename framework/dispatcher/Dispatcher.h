@@ -11,26 +11,27 @@
 #include "../object/ONObject.h"
 #include <exception>
 #include <memory>
+#include <mutex>
+#include <thread>
 
 
 
 namespace onyx {
 
     class Dispatcher {
-    private:
-
+        
+    public:
+        
         class Route {
         public:
             std::string m_method;
             std::string m_regex;
             regex_t m_preg;
-            std::function<std::string(onyx::ONObject) > m_function;
+            std::function<std::string(onyx::ONObject &) > m_function;
         };
-
         std::vector<Route> m_routes;
-    public:
-        void addRoute(const std::string &method, const std::string &regex, std::function<std::string(onyx::ONObject)>) noexcept;
         std::string getResponseStr(const onyx::Request & request) const;
+        
     };
 }
 

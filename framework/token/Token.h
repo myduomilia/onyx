@@ -9,6 +9,7 @@
 #include <string.h>
 #include <memory>
 #include "../exception/Exception.h"
+#include "../common/plog/Log.h"
 
 static inline void ltrim(std::string &s) {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) {
@@ -34,7 +35,7 @@ namespace onyx {
         std::vector<std::string> m_tokens;
     public:
         TokenCollection(const std::string & url);
-
+        
         std::string operator[](size_t index) {
             if(index > m_tokens.size() || index < 0)
                 throw onyx::Exception("index not exists");
