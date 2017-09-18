@@ -4,13 +4,14 @@
 #include "BaseResponse.h"
 #include <iostream>
 #include <fstream>
+#include <string>
 
 namespace onyx {
 
     class HtmlResponse : public BaseResponse {
     private:
 
-        std::string file_reader(const std::string& path_to_html_file) {
+        std::string file_reader(const std::string & path_to_html_file) {
             std::stringstream buffer;
             std::string line;
             std::ifstream file(path_to_html_file.c_str());

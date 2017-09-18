@@ -12,10 +12,6 @@ namespace onyx {
         explicit BaseResponse(const std::string & header) :
         m_header(header), m_body() {
         }
-
-        std::string getResponseStr() const noexcept {
-            return m_header + m_body;
-        }
          
         operator std::string(){
             return m_header + m_body;
