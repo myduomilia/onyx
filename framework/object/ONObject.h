@@ -12,9 +12,7 @@ namespace onyx {
         TokenCollection m_token;
     public:
 
-        ONObject(const TokenCollection & token) : m_token(token) {
-            
-        }
+        ONObject(const TokenCollection & token) : m_token(token) {}
 
         TokenCollection getTokens() const {
             return m_token;

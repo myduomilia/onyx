@@ -8,7 +8,7 @@
 int onyx::Application::m_socket_id;
 std::vector<std::thread> onyx::Application::m_threads;
 
-std::unique_ptr<onyx::Dispatcher> onyx::Application::m_dispatcher(new onyx::Dispatcher);
+std::unique_ptr<onyx::Dispatcher> onyx::Application::m_dispatcher(new Dispatcher);
 
 std::mutex onyx::Application::m_mutex_class;
 std::unique_ptr<plog::RollingFileAppender<plog::TxtFormatter>> onyx::Application::m_file_log_appender(nullptr);
@@ -21,21 +21,22 @@ size_t onyx::Application::m_thread_count = 8;
 void onyx::Application::run() {
 
     for (size_t i = 0; i < m_thread_count; i++)
-        m_threads.push_back(std::thread(handler, i));
+        m_threads.push_back(std::thread(handler));
 
     for (auto& thread : m_threads)
         thread.join();
 
 }
 
-void onyx::Application::handler(int index_dispatcher) {
+void onyx::Application::handler() {
     int rc;
     FCGX_Request request;
     if (FCGX_InitRequest(&request, m_socket_id, 0) != 0)
         return;
     for (;;) {
-        std::lock_guard<std::mutex> lock(m_mutex_class);
+        m_mutex_class.lock();
         rc = FCGX_Accept_r(&request);
+        m_mutex_class.unlock();
 
         if (rc < 0)
             continue;
@@ -85,7 +86,7 @@ void onyx::Application::addRoute(const std::string& method, const std::string& r
         char buf[512];
         regerror(err, &route.m_preg, buf, sizeof (buf));
         LOGE << buf;
-    } else{
+    } else {
         m_dispatcher->m_routes.push_back(route);
     }
 }

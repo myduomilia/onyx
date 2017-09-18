@@ -9,8 +9,8 @@ std::string onyx::Dispatcher::getResponseStr(const onyx::Request & request) cons
             regerr = regexec(&route.m_preg, request.getUrl().c_str(), 0, &pm, 0);
             if (regerr == 0) {
                 onyx::TokenCollection token(request.getUrl());
-                onyx::ONObject object(token);
-                return route.m_function(object);
+                onyx::ONObject obj(token);
+                return route.m_function(obj);
             } else if(regerr == 1){
                 // todo:
             }

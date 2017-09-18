@@ -40,7 +40,7 @@ namespace onyx {
         static std::unique_ptr<plog::RollingFileAppender<plog::TxtFormatter>> m_file_log_appender;
         static std::unique_ptr<plog::ColorConsoleAppender<plog::TxtFormatter>> m_console_log_appender;
 
-        static void handler(int index_dispatcher);
+        static void handler();
 
         static void setConfig(const std::string & path_config_file);
 
