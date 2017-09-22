@@ -59,7 +59,8 @@ void onyx::Application::handler() {
         }
         if (request_cookie)
             onyx_request.parse_cookie(request_cookie);
-        onyx_request.setUrl(request_url);
+        std::string url = prepare_url(request_url);
+        onyx_request.setUrl(url.c_str());
         onyx_request.setIp(request_ip_address);
         onyx_request.setMethod(request_method);
         onyx_request.setParams(request_params);
@@ -148,4 +149,16 @@ void onyx::Application::init() {
     }
     LOGI << "ONYX started success";
 
+}
+std::string onyx::Application::prepare_url(const char * url) noexcept {
+    std::string prepare(url);
+    int ind = strlen(url) - 1;
+    while (ind > 0) {
+        if (url[ind] == '?')
+            break;
+        ind--;
+    }
+    if (ind > 0)
+        return prepare.substr(0, ind);
+    return prepare;
 }

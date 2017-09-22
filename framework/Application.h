@@ -10,6 +10,7 @@
 #include <iostream>
 #include <regex.h>
 #include <functional>
+#include <algorithm>
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -43,6 +44,8 @@ namespace onyx {
         static void handler();
 
         static void setConfig(const std::string & path_config_file);
+        
+        static std::string prepare_url(const char * url) noexcept;
 
     public:
 

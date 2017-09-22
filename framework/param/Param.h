@@ -19,7 +19,7 @@ namespace onyx {
     public:
         ParamCollection(const std::string & params);
         
-        std::map<std::string, std::string> getParams(){
+        std::map<std::string, std::string> getMap(){
             return m_params;
         }
 

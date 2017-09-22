@@ -34,6 +34,7 @@ install:
 	@if [ ! -d /usr/include/onyx/request ]; then mkdir /usr/include/onyx/request; fi
 	@if [ ! -d /usr/include/onyx/response ]; then mkdir /usr/include/onyx/response; fi
 	@if [ ! -d /usr/include/onyx/token ]; then mkdir /usr/include/onyx/token; fi
+	@if [ ! -d /usr/include/onyx/param ]; then mkdir /usr/include/onyx/param; fi
 	@if [ ! -d /usr/include/onyx/object ]; then mkdir /usr/include/onyx/object; fi
 	@if [ ! -d /var/log/onyx ]; then mkdir /var/log/onyx; fi
 	cp framework/Application.h /usr/include/onyx/
@@ -44,6 +45,7 @@ install:
 	cp framework/response/JsonResponse.h /usr/include/onyx/response/
 	cp framework/response/HtmlResponse.h /usr/include/onyx/response/
 	cp framework/token/Token.h /usr/include/onyx/token/
+	cp framework/param/Param.h /usr/include/onyx/param/
 	cp framework/object/ONObject.h /usr/include/onyx/object/
 	cp -r framework/common /usr/include/onyx/
 	sudo ldconfig
