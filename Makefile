@@ -6,6 +6,7 @@ SOURCES = framework/Application.cpp\
     framework/request/Request.cpp\
     framework/dispatcher/Dispatcher.cpp\
     framework/token/Token.cpp\
+    framework/param/Param.cpp\
     framework/object/ONObject.cpp
 	
 OBJECTS = $(SOURCES:.cpp=.o)

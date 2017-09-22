@@ -46,6 +46,7 @@ void onyx::Application::handler() {
         const char * request_url = FCGX_GetParam("REQUEST_URI", request.envp);
         const char * request_method = FCGX_GetParam("REQUEST_METHOD", request.envp);
         const char * request_cookie = FCGX_GetParam("HTTP_COOKIE", request.envp);
+        const char * request_params = FCGX_GetParam("QUERY_STRING", request.envp);
         char * content_length_str = FCGX_GetParam("CONTENT_LENGTH", request.envp);
         size_t content_length = strtol(content_length_str, &content_length_str, 10);
 
@@ -61,7 +62,7 @@ void onyx::Application::handler() {
         onyx_request.setUrl(request_url);
         onyx_request.setIp(request_ip_address);
         onyx_request.setMethod(request_method);
-        onyx_request.parse_tokens_queries(FCGX_GetParam("QUERY_STRING", request.envp));
+        onyx_request.setParams(request_params);
         try {
             std::string response_str = m_dispatcher->getResponseStr(onyx_request);
             FCGX_PutS(response_str.c_str(), request.out);
