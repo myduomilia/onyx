@@ -38,7 +38,7 @@ namespace onyx {
 
         std::string & operator[](size_t index) {
             if(index > m_tokens.size() || index < 0)
-                throw onyx::Exception("index not exists");
+                throw onyx::Exception("index of token not exists");
             return m_tokens[index];
         }
         
