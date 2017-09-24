@@ -19,9 +19,17 @@ namespace onyx {
     public:
         ParamCollection(const std::string & params);
         
-        std::map<std::string, std::string> getMap(){
-            return m_params;
+        std::string & operator[](const std::string & key) {
+            auto it = m_params.find(key);
+            if(it == m_params.end())
+                throw onyx::Exception("key not exists");
+            return it->second;
         }
+        
+        int size(){
+            return m_params.size();
+        }
+        
 
     };
 }

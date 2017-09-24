@@ -75,6 +75,10 @@ namespace onyx {
         std::string getParams() const {
             return m_params;
         }
+        
+        std::string getBody() const {
+            return m_body;
+        }
 
     };
 }

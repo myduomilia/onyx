@@ -10,19 +10,25 @@ namespace onyx {
 
     class ONObject {
     private:
-        TokenCollection m_token;
-        ParamCollection m_params;
+        TokenCollection m_token_collection;
+        ParamCollection m_param_collection;
+        std::string m_body;
     public:
 
-        ONObject(const TokenCollection & token, const ParamCollection & params) : m_token(token), m_params(params) {}
+        ONObject(const TokenCollection & token, const ParamCollection & params, const std::string & body) : m_token_collection(token), m_param_collection(params), m_body(body) {}
 
-        TokenCollection getTokens() const {
-            return m_token;
+        TokenCollection getTokenCollection() const {
+            return m_token_collection;
         }
         
-        ParamCollection getParams() const {
-            return m_params;
+        ParamCollection getParamCollection() const {
+            return m_param_collection;
         }
+        
+        std::string getBody() const {
+            return m_body;
+        }
+
     };
 }
 
