@@ -7,6 +7,12 @@ Linux
 
 ## Установка
 
+### Необходимые библиотеки
+
+```bash
+sudo apt-get install libfcgi-dev
+```
+
 ```bash
 make clean
 make
