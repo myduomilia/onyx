@@ -7,8 +7,18 @@ Linux
 
 ## Установка
 
+### Необходимые библиотеки
+
+```bash
+sudo apt-get install libfcgi-dev
+```
+
 ```bash
 make clean
 make
 sudo make install
 ```
+
+## Использую:
+* Логирование  - https://github.com/SergiusTheBest/plog 
+* Работа с JSON - https://github.com/nlohmann/json
