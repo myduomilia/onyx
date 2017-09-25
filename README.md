@@ -18,7 +18,7 @@ make clean
 make
 sudo make install
 ```
-
 ## Использую:
-* Логирование  - https://github.com/SergiusTheBest/plog 
+* Логирование  - https://github.com/SergiusTheBest/plog
 * Работа с JSON - https://github.com/nlohmann/json
+* Рендеринг шаблонов - https://github.com/kainjow/Mustache
