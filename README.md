@@ -20,5 +20,5 @@ sudo make install
 ```
 ## Использую:
 * Логирование  - https://github.com/SergiusTheBest/plog (содержится в проекте)
-* Работа с JSON - https://github.com/nlohmann/json (содержится в проекте
+* Работа с JSON - https://github.com/nlohmann/json (содержится в проекте)
 * Рендеринг шаблонов - https://github.com/no1msd/mstch (устанавливается отдельно)
