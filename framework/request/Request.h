@@ -40,15 +40,15 @@ namespace onyx {
         void parse_cookie(const char * cookie) noexcept;
         std::vector<std::string> fetch_tokens_url() noexcept;
 
-        void setMethod(const std::string& method) {
+        void setMethod(const std::string & method) {
             m_method = method;
         }
 
-        void setIp(const std::string& ip) {
+        void setIp(const std::string & ip) {
             m_ip = ip;
         }
 
-        void setBody(const std::string& body) {
+        void setBody(const std::string & body) {
             m_body = body;
         }
 

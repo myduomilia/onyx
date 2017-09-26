@@ -2,6 +2,7 @@
 
 void onyx::Request::parse_cookie(const char * cookie) noexcept {
     std::unique_ptr<char[]> buffer(new char[strlen(cookie) + 1]);
+    memset(buffer.get(), '\0', strlen(cookie) + 1);
     strncpy(buffer.get(), cookie, strlen(cookie) + 1);
     char *savep_tr;
     char *token = strtok_r(buffer.get(), ";", &savep_tr);

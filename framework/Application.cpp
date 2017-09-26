@@ -54,6 +54,7 @@ void onyx::Application::handler() {
 
         if (content_length > 0) {
             std::unique_ptr<char[] > buffer(new char[content_length + 1]);
+            memset(buffer.get(), '\0', content_length + 1);
             FCGX_GetStr(buffer.get(), content_length, request.in);
             onyx_request.setBody(buffer.get());
         }
