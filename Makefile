@@ -2,12 +2,13 @@ CC=g++
 CFLAGS = -c -Wall -std=c++14 -fPIC
 LDFLAGS = -lfcgi -lpthread -lcurl
 
-SOURCES = framework/Application.cpp\
-    framework/request/Request.cpp\
+SOURCES = framework/request/Request.cpp\
     framework/dispatcher/Dispatcher.cpp\
     framework/token/Token.cpp\
     framework/param/Param.cpp\
-    framework/object/ONObject.cpp
+    framework/object/ONObject.cpp\
+    framework/handlers/404.cpp\
+    framework/Application.cpp
 	
 OBJECTS = $(SOURCES:.cpp=.o)
 EXECUTABLE = onyx
@@ -36,6 +37,7 @@ install:
 	@if [ ! -d /usr/include/onyx/token ]; then mkdir /usr/include/onyx/token; fi
 	@if [ ! -d /usr/include/onyx/param ]; then mkdir /usr/include/onyx/param; fi
 	@if [ ! -d /usr/include/onyx/object ]; then mkdir /usr/include/onyx/object; fi
+	@if [ ! -d /usr/include/onyx/handlers ]; then mkdir /usr/include/onyx/handlers; fi
 	@if [ ! -d /var/log/onyx ]; then mkdir /var/log/onyx; fi
 	cp framework/Application.h /usr/include/onyx/
 	cp framework/dispatcher/Dispatcher.h /usr/include/onyx/dispatcher/
@@ -47,6 +49,7 @@ install:
 	cp framework/token/Token.h /usr/include/onyx/token/
 	cp framework/param/Param.h /usr/include/onyx/param/
 	cp framework/object/ONObject.h /usr/include/onyx/object/
+	cp framework/handlers/404.h /usr/include/onyx/handlers/
 	cp -r framework/common /usr/include/onyx/
 	sudo ldconfig
 	

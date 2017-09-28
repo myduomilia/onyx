@@ -25,6 +25,8 @@
 #include "common/json/json.hpp"
 #include "dispatcher/Dispatcher.h"
 
+#include "handlers/404.h"
+
 using json = nlohmann::json;
 
 namespace onyx {

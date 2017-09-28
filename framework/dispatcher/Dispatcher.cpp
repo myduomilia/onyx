@@ -1,5 +1,6 @@
 #include <exception>
 #include "Dispatcher.h"
+#include "../handlers/404.h"
 
 std::string onyx::Dispatcher::getResponseStr(const onyx::Request & request) const {
     for (auto & route : m_routes) {
@@ -12,15 +13,16 @@ std::string onyx::Dispatcher::getResponseStr(const onyx::Request & request) cons
                 onyx::ParamCollection params(request.getParams());
                 onyx::ONObject obj(token, params, request.getBody());
                 return route.m_function(obj);
-            } else if(regerr == 1){
+            } else if (regerr == 1) {
                 // todo:
-            }
-            else {
+            } else {
                 char errbuf[1024];
                 regerror(regerr, &route.m_preg, errbuf, sizeof (errbuf));
                 LOGE << errbuf;
             }
         }
     }
+    if (request.getMethod() == "GET")
+        return onyx::handler::_404();
     throw onyx::Exception("Request " + request.getUrl() + " can't process");
 }

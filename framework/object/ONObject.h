@@ -14,7 +14,7 @@ namespace onyx {
         ParamCollection m_param_collection;
         std::string m_body;
     public:
-
+        
         ONObject(const TokenCollection & token, const ParamCollection & params, const std::string & body) : m_token_collection(token), m_param_collection(params), m_body(body) {}
 
         TokenCollection getTokenCollection() const {

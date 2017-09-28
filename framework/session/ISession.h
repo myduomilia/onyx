@@ -7,11 +7,10 @@
 #include <memory>
 #include "../exception/Exception.h"
 
-template <typename T, typename V>
+template <typename T>
 class ISession {
 private:
     T m_session_id;
-    V m_user_id;
     std::string m_data;
     time_t timestamp_expire;
 public:
@@ -35,15 +34,12 @@ public:
         return m_session_id;
     }
 
-    const V getUserId() const {
-        return m_user_id;
-    }
 
     time_t getTimestampExpire() const {
         return timestamp_expire;
     }
 
-    virtual ISession fetch() throw(onyx::Exception) = 0;
+    virtual std::shared_ptr<ISession> fetch(T session_id) = 0;
     virtual void create() = 0;
     virtual void save() = 0;
     virtual void remove() = 0;
