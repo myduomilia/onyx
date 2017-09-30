@@ -59,7 +59,7 @@ void onyx::Application::handler() {
             onyx_request.setBody(buffer.get());
         }
         if (request_cookie)
-            onyx_request.parse_cookie(request_cookie);
+            onyx_request.setCookies(request_cookie);
         std::string url = prepare_url(request_url);
         onyx_request.setUrl(url.c_str());
         onyx_request.setIp(request_ip_address);

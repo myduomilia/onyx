@@ -9,6 +9,7 @@
 #include "../response/BaseResponse.h"
 #include "../exception/Exception.h"
 #include "../object/ONObject.h"
+#include "../cookie/Cookie.h"
 #include <exception>
 #include <memory>
 #include <mutex>

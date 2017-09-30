@@ -11,7 +11,9 @@ std::string onyx::Dispatcher::getResponseStr(const onyx::Request & request) cons
             if (regerr == 0) {
                 onyx::TokenCollection token(request.getUrl());
                 onyx::ParamCollection params(request.getParams());
-                onyx::ONObject obj(token, params, request.getBody());
+                onyx::CookieCollection cookies(request.getCookies());
+                onyx::ONObject obj(token, params, cookies, request.getBody());
+                
                 return route.m_function(obj);
             } else if (regerr == 1) {
                 // todo:

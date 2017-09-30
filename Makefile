@@ -2,10 +2,10 @@ CC=g++
 CFLAGS = -c -Wall -std=c++14 -fPIC
 LDFLAGS = -lfcgi -lpthread -lcurl
 
-SOURCES = framework/request/Request.cpp\
-    framework/dispatcher/Dispatcher.cpp\
+SOURCES = framework/dispatcher/Dispatcher.cpp\
     framework/token/Token.cpp\
     framework/param/Param.cpp\
+    framework/cookie/Cookie.cpp\
     framework/object/ONObject.cpp\
     framework/handlers/404.cpp\
     framework/Application.cpp
@@ -37,6 +37,7 @@ install:
 	@if [ ! -d /usr/include/onyx/token ]; then mkdir /usr/include/onyx/token; fi
 	@if [ ! -d /usr/include/onyx/param ]; then mkdir /usr/include/onyx/param; fi
 	@if [ ! -d /usr/include/onyx/object ]; then mkdir /usr/include/onyx/object; fi
+	@if [ ! -d /usr/include/onyx/cookie ]; then mkdir /usr/include/onyx/cookie; fi
 	@if [ ! -d /usr/include/onyx/handlers ]; then mkdir /usr/include/onyx/handlers; fi
 	@if [ ! -d /var/log/onyx ]; then mkdir /var/log/onyx; fi
 	cp framework/Application.h /usr/include/onyx/
@@ -48,6 +49,7 @@ install:
 	cp framework/response/HtmlResponse.h /usr/include/onyx/response/
 	cp framework/token/Token.h /usr/include/onyx/token/
 	cp framework/param/Param.h /usr/include/onyx/param/
+	cp framework/cookie/Cookie.h /usr/include/onyx/cookie/
 	cp framework/object/ONObject.h /usr/include/onyx/object/
 	cp framework/handlers/404.h /usr/include/onyx/handlers/
 	cp -r framework/common /usr/include/onyx/

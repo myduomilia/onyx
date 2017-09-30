@@ -18,7 +18,7 @@ namespace onyx {
         std::string m_body;
         std::string m_ip;
         std::string m_params;
-        std::map<std::string, std::string> m_cookie;
+        std::string m_cookies;
 
         static inline void ltrim(std::string &s) {
             s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) {
@@ -37,8 +37,11 @@ namespace onyx {
             rtrim(s);
         }
     public:
-        void parse_cookie(const char * cookie) noexcept;
         std::vector<std::string> fetch_tokens_url() noexcept;
+        
+        void setCookies(const char* cookies){
+            m_cookies = cookies;
+        }
 
         void setMethod(const std::string & method) {
             m_method = method;
@@ -78,6 +81,10 @@ namespace onyx {
         
         std::string getBody() const {
             return m_body;
+        }
+        
+        std::string getCookies() const {
+            return m_cookies;
         }
 
     };
