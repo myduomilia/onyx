@@ -3,6 +3,7 @@
 #include "../handlers/404.h"
 #include "../handlers/403.h"
 #include "../security/Security.h"
+#include "../response/RedirectResponse.h"
 
 std::string onyx::Dispatcher::getResponseStr(const onyx::Request & request) const {
     for (auto & route : m_routes) {
@@ -19,7 +20,12 @@ std::string onyx::Dispatcher::getResponseStr(const onyx::Request & request) cons
                     std::string response = route.m_function(obj);
                     return response;
                 }else{
-                    return onyx::handler::_403();
+                    if(!cookies.has("sessionid")){
+                        return onyx::RedirectResponse("Авторизация", onyx::Security::m_login_url);
+                    }else{
+//                        Если роль не подходит то
+                        return onyx::handler::_403();
+                    }
                 }
                 
 //                try {

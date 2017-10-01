@@ -12,7 +12,7 @@ namespace onyx {
     class Security {
         
     public:
-        static std::string m_class_name_session;
+        static std::string m_login_url;
         static std::string m_auth_url;
         
     };

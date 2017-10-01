@@ -53,6 +53,7 @@ install:
 	cp framework/response/BaseResponse.h /usr/include/onyx/response/
 	cp framework/response/JsonResponse.h /usr/include/onyx/response/
 	cp framework/response/HtmlResponse.h /usr/include/onyx/response/
+	cp framework/response/RedirectResponse.h /usr/include/onyx/response/
 	cp framework/session/Session.h /usr/include/onyx/session/
 	cp framework/security/Security.h /usr/include/onyx/security/
 	cp framework/token/Token.h /usr/include/onyx/token/

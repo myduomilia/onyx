@@ -26,6 +26,13 @@ namespace onyx {
             return it->second;
         }
         
+        bool has(const std::string & key){
+            auto it = m_params.find(key);
+            if(it == m_params.end())
+                return false;
+            return true;
+        }
+        
         int size(){
             return m_params.size();
         }

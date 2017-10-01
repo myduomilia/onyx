@@ -21,6 +21,13 @@ namespace onyx {
                 throw onyx::Exception("key not exists");
             return it->second;
         }
+        
+        bool has(const std::string & key){
+            auto it = m_cookies.find(key);
+            if(it == m_cookies.end())
+                return false;
+            return true;
+        }
 
         int size() {
             return m_cookies.size();
