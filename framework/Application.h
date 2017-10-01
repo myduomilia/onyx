@@ -19,6 +19,7 @@
 #include <fcntl.h>
 #include <mutex>
 #include <memory>
+#include <tuple>
 
 #include "common/plog/Log.h"
 #include "common/plog/Appenders/ColorConsoleAppender.h"
@@ -58,7 +59,7 @@ namespace onyx {
         static void init();
         static void run();
 
-        static void addRoute(const std::string &method, const std::string &regex, std::function<std::string(onyx::ONObject &)>) noexcept;
+        static void addRoute(const std::string &method, const std::string &regex, std::function<std::string(onyx::ONObject &)>, std::vector<std::string> roles = {"GUEST"}) noexcept;
 
 
     };

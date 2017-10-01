@@ -9,7 +9,6 @@
 
 namespace onyx {
     
-
     class HtmlResponse : public BaseResponse {
     private:
 

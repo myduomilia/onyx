@@ -77,11 +77,12 @@ void onyx::Application::handler() {
     return;
 }
 
-void onyx::Application::addRoute(const std::string& method, const std::string& regex, std::function<std::string(onyx::ONObject & object) > function) noexcept {
+void onyx::Application::addRoute(const std::string& method, const std::string& regex, std::function<std::string(onyx::ONObject & object) > function, std::vector<std::string> roles) noexcept {
     onyx::Dispatcher::Route route;
     route.m_method = method;
     route.m_regex = regex;
     route.m_function = function;
+    route.m_roles = roles;
 
     int err;
     err = regcomp(&route.m_preg, route.m_regex.c_str(), REG_EXTENDED);

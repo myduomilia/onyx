@@ -14,8 +14,13 @@
 #include <memory>
 #include <mutex>
 #include <thread>
-
-
+#include <iostream>
+#include <sstream>
+#include <boost/uuid/uuid.hpp>            
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/uuid/uuid_io.hpp>
+#include <tuple>
 
 namespace onyx {
 
@@ -29,6 +34,7 @@ namespace onyx {
             std::string m_regex;
             regex_t m_preg;
             std::function<std::string(onyx::ONObject &) > m_function;
+            std::vector<std::string> m_roles;
         };
         std::vector<Route> m_routes;
         std::string getResponseStr(const onyx::Request & request) const;

@@ -9,8 +9,7 @@ namespace onyx {
         std::string m_body;
     public:
 
-        explicit BaseResponse(const std::string & header) :
-        m_header(header), m_body() {
+        explicit BaseResponse(const std::string & header) : m_header(header){
         }
          
         operator std::string(){
