@@ -26,11 +26,14 @@
 #include "common/json/json.hpp"
 #include "dispatcher/Dispatcher.h"
 
+#include "security/Security.h"
+
 #include "handlers/404.h"
 
 using json = nlohmann::json;
 
 namespace onyx {
+    
 
     class Application {
     private:
@@ -55,6 +58,7 @@ namespace onyx {
         static std::string m_socket_path;
         static std::string m_log_file_path;
         static size_t m_thread_count;
+        static std::unique_ptr<Security> m_security;
 
         static void init();
         static void run();

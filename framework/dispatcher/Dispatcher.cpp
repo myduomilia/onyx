@@ -4,6 +4,7 @@
 #include "../handlers/403.h"
 #include "../security/Security.h"
 #include "../response/RedirectResponse.h"
+#include "../Application.h"
 
 std::string onyx::Dispatcher::getResponseStr(const onyx::Request & request) const {
     for (auto & route : m_routes) {
@@ -23,7 +24,11 @@ std::string onyx::Dispatcher::getResponseStr(const onyx::Request & request) cons
                     if(!cookies.has("sessionid")){
                         return onyx::RedirectResponse("Авторизация", onyx::Security::m_login_url);
                     }else{
-//                        Если роль не подходит то
+                        onyx::UserSession user = onyx::Application::m_security->getUser(cookies["sessionid"]);
+                        if(std::find(route.m_roles.begin(), route.m_roles.end(), user.getRole()) != route.m_roles.end()){
+                            std::string response = route.m_function(obj);
+                            return response;
+                        }
                         return onyx::handler::_403();
                     }
                 }
