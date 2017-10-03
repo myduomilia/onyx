@@ -47,7 +47,7 @@ namespace onyx {
         
         virtual UserSession fetchUserBySessionId(const std::string & id) noexcept = 0;
         virtual void create(const std::string & id) noexcept = 0;
-        virtual void remove() noexcept = 0;
+        virtual void remove(const std::string & id) noexcept = 0;
 
         
     };
