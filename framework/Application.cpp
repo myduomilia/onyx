@@ -9,7 +9,6 @@ int onyx::Application::m_socket_id;
 std::vector<std::thread> onyx::Application::m_threads;
 
 std::unique_ptr<onyx::Dispatcher> onyx::Application::m_dispatcher(new Dispatcher);
-std::unique_ptr<onyx::Security> onyx::Application::m_security(nullptr);
 
 std::mutex onyx::Application::m_mutex_class;
 std::unique_ptr<plog::RollingFileAppender<plog::TxtFormatter>> onyx::Application::m_file_log_appender(nullptr);
@@ -129,7 +128,7 @@ void onyx::Application::setConfig(const std::string & path_config_file) {
 }
 
 void onyx::Application::init() {
-    if(m_security == nullptr){
+    if(onyx::Security::m_callbackRole == nullptr || onyx::Security::m_session == nullptr){
         LOGE << "Undefined security. Application stoped";
         exit(EXIT_FAILURE);
     }
@@ -154,6 +153,7 @@ void onyx::Application::init() {
         LOGE << "Error create socket";
         exit(EXIT_FAILURE);
     }
+    Application::addRoute("POST", "^" + onyx::Security::m_auth_url + "$", onyx::Security::auth);
     LOGI << "ONYX started success";
 
 }

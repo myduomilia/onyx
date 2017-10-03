@@ -24,7 +24,7 @@ std::string onyx::Dispatcher::getResponseStr(const onyx::Request & request) cons
                     if(!cookies.has("sessionid")){
                         return onyx::RedirectResponse("Авторизация", onyx::Security::m_login_url);
                     }else{
-                        onyx::UserSession user = onyx::Application::m_security->getUser(cookies["sessionid"]);
+                        onyx::UserSession user = onyx::Security::getUser(cookies["sessionid"]);
                         if(std::find(route.m_roles.begin(), route.m_roles.end(), user.getRole()) != route.m_roles.end()){
                             std::string response = route.m_function(obj);
                             return response;
@@ -32,19 +32,6 @@ std::string onyx::Dispatcher::getResponseStr(const onyx::Request & request) cons
                         return onyx::handler::_403();
                     }
                 }
-                
-//                try {
-//                    cookies["sessionid"];
-//                    return response;
-//                } catch (onyx::Exception &ex) {
-//                    std::stringstream stream;
-//                    boost::uuids::uuid uuid = boost::uuids::random_generator()();
-//                    time_t expires = time(NULL) + 60 * 60 * 24 * 30;
-//                    char buff[40];
-//                    strftime(buff, sizeof(buff), "%d-%b-%Y %H:%M:%S", localtime(&expires));
-//                    stream << "Set-Cookie: sessionid=" << boost::lexical_cast<std::string>(uuid) << "; expires=" << buff << ";\r\n " << response;
-//                    return stream.str();
-//                }
             } else if (regerr == 1) {
                 // todo:
             } else {

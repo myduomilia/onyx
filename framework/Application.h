@@ -58,7 +58,6 @@ namespace onyx {
         static std::string m_socket_path;
         static std::string m_log_file_path;
         static size_t m_thread_count;
-        static std::unique_ptr<Security> m_security;
 
         static void init();
         static void run();
