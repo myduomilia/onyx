@@ -5,6 +5,9 @@
 #include <string>
 #include <exception>
 #include <memory>
+#include <map>
+#include <thread>
+#include <mutex>
 
 namespace onyx {
     
@@ -31,24 +34,36 @@ namespace onyx {
         
     private:
         std::string m_id;
-        time_t m_expires;
+        UserSession m_user;
+        std::map<std::string, std::string> m_data;
     public:
-        Session(){
-            
-        }
         
-        void setExpires(time_t expires) {
-            m_expires = expires;
+        Session(const std::string & id, UserSession user) : m_id(id), m_user(user) {
         }
-        
-        time_t getExpires() const {
-            return m_expires;
-        }
-        
-        virtual UserSession fetchUserBySessionId(const std::string & id) noexcept = 0;
-        virtual void create(const std::string & id) noexcept = 0;
-        virtual void remove(const std::string & id) noexcept = 0;
 
+        
+        virtual std::unique_ptr<Session> create(const std::string & id) noexcept = 0;
+        virtual std::unique_ptr<Session> fetch(const std::string & id) noexcept = 0;
+        virtual void remove() noexcept = 0;
+        virtual void clearAll() noexcept = 0;
+        
+        UserSession getUser() const {
+            return m_user;
+        }
+        
+        void addStringData(const std::string & key, const std::string & val) noexcept {
+            m_data[key] = val;
+        };
+        std::string getStringData(const std::string & key) {
+            if(m_data.find(key) == m_data.end())
+                return m_data[key];
+        }
+        void removeData(const std::string & key) {
+            if(m_data.find(key) != m_data.end()){
+                auto it = m_data.find(key);
+                m_data.erase(it);
+            }
+        };
         
     };
 }

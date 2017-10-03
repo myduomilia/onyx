@@ -30,7 +30,8 @@ namespace onyx {
         static std::function<std::string(const std::string & login, const std::string & password) > m_callbackRole;
         
         static onyx::UserSession getUser(const std::string & id){
-            return m_session->fetchUserBySessionId(id);
+            std::unique_ptr<Session> session = m_session->fetch(id);
+            return session->getUser();
         }
         
         static std::string auth(onyx::ONObject & obj);
