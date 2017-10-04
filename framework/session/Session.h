@@ -51,7 +51,7 @@ namespace onyx {
 
     class SessionStorage {
     public:
-        virtual std::unique_ptr<Session> createSession(const std::string & id, const std::string & user_id) noexcept = 0;
+        virtual void createSession(const std::string & id, const std::string & user_id) noexcept = 0;
         virtual std::unique_ptr<Session> fetchSession(const std::string & id) noexcept = 0;
         virtual void removeSession(const std::string & id) noexcept = 0;
         virtual void clearAllSession() noexcept = 0;
