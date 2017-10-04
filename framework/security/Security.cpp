@@ -4,8 +4,8 @@ std::string onyx::Security::m_login_url = "/login";
 std::string onyx::Security::m_auth_url = "/auth";
 std::string onyx::Security::m_redirect_url = "/";
 
-std::unique_ptr<onyx::Session> onyx::Security::m_session(nullptr);
-std::function<std::string(const std::string & login, const std::string & password)> onyx::Security::m_callbackRole = nullptr;
+std::unique_ptr<onyx::SessionStorage> onyx::Security::m_session_storage(nullptr);
+std::function<onyx::session::User(const std::string & login, const std::string & password)> onyx::Security::m_callbackUser = nullptr;
 
 static std::map<std::string, std::string> parse(const std::string& body) {
     std::map<std::string, std::string> m;
@@ -45,11 +45,11 @@ std::string onyx::Security::auth(onyx::ONObject& obj) {
         login = m["login"];
     if(m.find("password") != m.end())
         password = m["password"];
-    std::string role = m_callbackRole(login, password);
-    if(role == "")
+    onyx::session::User user = m_callbackUser(login, password);
+    if(user.getId() == "")
         return onyx::RedirectResponse("Авторизация", onyx::Security::m_login_url);
     std::string response = onyx::RedirectResponse("Вход в приложение", m_redirect_url);
     stream << "Set-Cookie: sessionid=" << boost::lexical_cast<std::string>(uuid) << "; expires=" << buff << ";\r\n " << response;
-    m_session->create(boost::lexical_cast<std::string>(uuid));
+    m_session_storage->createSession(boost::lexical_cast<std::string>(uuid), user.getId());
     return stream.str();
 }

@@ -26,11 +26,11 @@ namespace onyx {
         static std::string m_auth_url;
         static std::string m_redirect_url;
         
-        static std::unique_ptr<Session> m_session;
-        static std::function<std::string(const std::string & login, const std::string & password) > m_callbackRole;
+        static std::unique_ptr<SessionStorage> m_session_storage;
+        static std::function<onyx::session::User(const std::string & login, const std::string & password) > m_callbackUser;
         
-        static onyx::UserSession getUser(const std::string & id){
-            std::unique_ptr<Session> session = m_session->fetch(id);
+        static onyx::session::User getUser(const std::string & id){
+            std::unique_ptr<Session> session = m_session_storage->fetchSession(id);
             return session->getUser();
         }
         

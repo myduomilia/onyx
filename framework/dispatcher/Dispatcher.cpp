@@ -24,7 +24,7 @@ std::string onyx::Dispatcher::getResponseStr(const onyx::Request & request) cons
                     if(!cookies.has("sessionid")){
                         return onyx::RedirectResponse("Авторизация", onyx::Security::m_login_url);
                     }else{
-                        onyx::UserSession user = onyx::Security::getUser(cookies["sessionid"]);
+                        onyx::session::User user = onyx::Security::getUser(cookies["sessionid"]);
                         if(std::find(route.m_roles.begin(), route.m_roles.end(), user.getRole()) != route.m_roles.end()){
                             std::string response = route.m_function(obj);
                             return response;

@@ -128,8 +128,8 @@ void onyx::Application::setConfig(const std::string & path_config_file) {
 }
 
 void onyx::Application::init() {
-    if(onyx::Security::m_callbackRole == nullptr || onyx::Security::m_session == nullptr){
-        LOGE << "Undefined security. Application stoped";
+    if(onyx::Security::m_callbackUser == nullptr || onyx::Security::m_session_storage == nullptr){
+        LOGE << "Undefined callbackRole function or session storage. Application stoped";
         exit(EXIT_FAILURE);
     }
     setConfig("settings.json");
