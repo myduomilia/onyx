@@ -37,7 +37,7 @@ std::string onyx::Security::auth(onyx::ONObject& obj) {
     boost::uuids::uuid uuid = boost::uuids::random_generator()();
     time_t expires = time(NULL) + 60 * 60 * 24 * 30;
     char buff[40];
-    strftime(buff, sizeof (buff), "%d-%b-%Y %H:%M:%S", localtime(&expires));
+    strftime(buff, sizeof (buff), "%a, %d-%b-%Y %H:%M:%S", localtime(&expires));
     std::map<std::string, std::string> m = parse(obj.getBody());
     std::string login = "";
     std::string password = "";
@@ -49,7 +49,7 @@ std::string onyx::Security::auth(onyx::ONObject& obj) {
     if(user.getId() == "")
         return onyx::RedirectResponse("Авторизация", onyx::Security::m_login_url);
     std::string response = onyx::RedirectResponse("Вход в приложение", m_redirect_url);
-    stream << "Set-Cookie: sessionid=" << boost::lexical_cast<std::string>(uuid) << "; expires=" << buff << ";\r\n " << response;
+    stream << "Set-Cookie: sessionid=" << boost::lexical_cast<std::string>(uuid) << "; expires=" << buff << "; HttpOnly;\r\n " << response;
     m_session_storage->createSession(boost::lexical_cast<std::string>(uuid), user.getId());
     return stream.str();
 }
