@@ -19,7 +19,7 @@ std::string onyx::Dispatcher::getResponseStr(const onyx::Request & request) cons
                 onyx::ONObject obj(token, params, cookies, request.getBody());
                 if (std::find(route.m_roles.begin(), route.m_roles.end(), "GUEST") != route.m_roles.end()) {
                     std::string response = route.m_function(obj);
-                    if (cookies.has("sessionid")) {
+                    if (cookies.has("sessionid") && onyx::Application::m_csrf_token_enabled) {
                         onyx::session::User user = onyx::Security::getUser(cookies["sessionid"]);
                         unsigned char* digest;
                         std::string user_id = user.getId();
