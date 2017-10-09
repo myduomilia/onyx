@@ -15,6 +15,8 @@
 #include <mutex>
 #include <thread>
 #include <iostream>
+#include <openssl/hmac.h>
+#include "../common/mustache/mustache.h"
 
 #include <tuple>
 

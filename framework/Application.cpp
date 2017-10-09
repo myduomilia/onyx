@@ -10,6 +10,9 @@ std::vector<std::thread> onyx::Application::m_threads;
 
 std::unique_ptr<onyx::Dispatcher> onyx::Application::m_dispatcher(new Dispatcher);
 
+bool onyx::Application::m_csrf_token_enabled = true;
+std::string onyx::Application::m_csrf_token_secret = "";
+
 std::mutex onyx::Application::m_mutex_class;
 std::unique_ptr<plog::RollingFileAppender<plog::TxtFormatter>> onyx::Application::m_file_log_appender(nullptr);
 std::unique_ptr<plog::ColorConsoleAppender<plog::TxtFormatter>> onyx::Application::m_console_log_appender(new plog::ColorConsoleAppender<plog::TxtFormatter>);
@@ -45,11 +48,12 @@ void onyx::Application::handler() {
         const char * request_ip_address = FCGX_GetParam("REMOTE_ADDR", request.envp);
         const char * request_url = FCGX_GetParam("REQUEST_URI", request.envp);
         const char * request_method = FCGX_GetParam("REQUEST_METHOD", request.envp);
+        const char * request_content_type = FCGX_GetParam("CONTENT_TYPE", request.envp);
         const char * request_cookie = FCGX_GetParam("HTTP_COOKIE", request.envp);
         const char * request_params = FCGX_GetParam("QUERY_STRING", request.envp);
         char * content_length_str = FCGX_GetParam("CONTENT_LENGTH", request.envp);
         size_t content_length = strtol(content_length_str, &content_length_str, 10);
-
+        
         onyx::Request onyx_request;
 
         if (content_length > 0) {
@@ -65,6 +69,7 @@ void onyx::Application::handler() {
         onyx_request.setIp(request_ip_address);
         onyx_request.setMethod(request_method);
         onyx_request.setParams(request_params);
+        onyx_request.setContentType(request_content_type);
         try {
             std::string response_str = m_dispatcher->getResponseStr(onyx_request);
             FCGX_PutS(response_str.c_str(), request.out);
@@ -130,6 +135,10 @@ void onyx::Application::setConfig(const std::string & path_config_file) {
 void onyx::Application::init() {
     if(onyx::Security::m_callbackUser == nullptr || onyx::Security::m_session_storage == nullptr){
         LOGE << "Undefined callbackRole function or session storage. Application stoped";
+        exit(EXIT_FAILURE);
+    }
+    if(m_csrf_token_enabled && m_csrf_token_secret == ""){
+        LOGE << "Secret token didn't set. Application stoped";
         exit(EXIT_FAILURE);
     }
     setConfig("settings.json");
