@@ -12,6 +12,7 @@ Linux
 ```bash
 sudo apt-get install libfcgi-dev
 sudo apt-get install libboost-all-dev
+sudo apt-get install openssl openssl-dev
 ```
 
 ```bash
