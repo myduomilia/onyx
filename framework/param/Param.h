@@ -22,7 +22,7 @@ namespace onyx {
         std::string & operator[](const std::string & key) {
             auto it = m_params.find(key);
             if(it == m_params.end())
-                throw onyx::Exception("key not exists");
+                throw onyx::Exception("Key doesn't exists in the ParamCollection");
             return it->second;
         }
         

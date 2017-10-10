@@ -103,7 +103,7 @@ void onyx::Application::addRoute(const std::string& method, const std::string& r
 void onyx::Application::setConfig(const std::string & path_config_file) {
     FILE* f = fopen(path_config_file.c_str(), "r");
     if (f == NULL) {
-        printf("%s\n", "Error open configuration file. Application stopped");
+        printf("%s\n", "Can't open configuration file. Application stopped");
         exit(EXIT_FAILURE);
     }
     std::string data;
@@ -127,14 +127,14 @@ void onyx::Application::setConfig(const std::string & path_config_file) {
                 m_thread_count = 1;
         }
     } catch (...) {
-        printf("%s\n", "Invalid format configuration file. Application stopped");
+        printf("%s\n", "Invalid format of configuration file. Application stopped");
         exit(EXIT_FAILURE);
     }
 }
 
 void onyx::Application::init() {
     if(onyx::Security::m_callbackUser == nullptr || onyx::Security::m_session_storage == nullptr){
-        LOGE << "Undefined callbackRole function or session storage. Application stoped";
+        LOGE << "CallbackRole function or session storage are undefined. Application stoped";
         exit(EXIT_FAILURE);
     }
     if(m_csrf_token_enabled && m_csrf_token_secret == ""){
@@ -146,7 +146,7 @@ void onyx::Application::init() {
         m_file_log_appender = std::unique_ptr<plog::RollingFileAppender < plog::TxtFormatter >> (new plog::RollingFileAppender<plog::TxtFormatter>(m_log_file_path.c_str(), 10000000, 10));
     plog::init(plog::debug, m_file_log_appender.get()).addAppender(m_console_log_appender.get());
     if (m_socket_path == "") {
-        LOGE << "Undefined unix socket file. Application stoped";
+        LOGE << "Unix socket file is undefined. Application stoped";
         exit(EXIT_FAILURE);
     }
     FCGX_Init();
@@ -155,11 +155,11 @@ void onyx::Application::init() {
     snprintf(buf, sizeof (buf), "chmod a+w %s", m_socket_path.c_str());
     int res = system(buf);
     if (res != 0) {
-        LOGE << "Error change mode access to socket file";
+        LOGE << "Can't change mode access of socket file";
         exit(EXIT_FAILURE);
     }
     if (m_socket_id < 0) {
-        LOGE << "Error create socket";
+        LOGE << "Can't create socket";
         exit(EXIT_FAILURE);
     }
     Application::addRoute("POST", "^" + onyx::Security::m_auth_url + "$", onyx::Security::auth);
