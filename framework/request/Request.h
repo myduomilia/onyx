@@ -53,8 +53,8 @@ namespace onyx {
             m_ip = ip;
         }
 
-        void setBody(const std::string & body) {
-            char * url_decode = curl_unescape(body.c_str(), body.size());
+        void setBody(const char* body) {
+            char * url_decode = curl_unescape(body, strlen(body));
             m_body = url_decode;
             curl_free(url_decode);
             

@@ -4,7 +4,6 @@
 #include "request/Request.h"
 #include "response/JsonResponse.h"
 #include "dispatcher/Dispatcher.h"
-#include "common/urldecode/URLDecode.h"
 
 int onyx::Application::m_socket_id;
 std::vector<std::thread> onyx::Application::m_threads;
