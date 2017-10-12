@@ -18,7 +18,7 @@ namespace onyx {
         std::string & operator[](const std::string & key) {
             auto it = m_cookies.find(key);
             if (it == m_cookies.end())
-                throw onyx::Exception("key not exists");
+                throw onyx::Exception("Key doesn't exists in the CookieCollection");
             return it->second;
         }
         
