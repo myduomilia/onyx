@@ -9,7 +9,11 @@
 #include <memory>
 #include <algorithm>
 
+#include "../common/utils.h"
+
 namespace onyx {
+
+    
 
     class Request {
     private:
@@ -54,10 +58,12 @@ namespace onyx {
         }
 
         void setBody(const char* body) {
-            char * url_decode = curl_unescape(body, strlen(body));
-            m_body = url_decode;
-            curl_free(url_decode);
-            
+            char * data = (char *) malloc(strlen(body) + 1);
+            memset(data, 0, strlen(body) + 1);
+            memcpy(data, body, strlen(body));
+            onyx::utils::urldecode(data);
+            m_body = data;
+            free(data);
         }
 
         void setUrl(const char* url) {
