@@ -4,6 +4,7 @@
 #include "request/Request.h"
 #include "response/JsonResponse.h"
 #include "dispatcher/Dispatcher.h"
+#include "common/urldecode/URLDecode.h"
 
 int onyx::Application::m_socket_id;
 std::vector<std::thread> onyx::Application::m_threads;
@@ -60,7 +61,9 @@ void onyx::Application::handler() {
             std::unique_ptr<char[] > buffer(new char[content_length + 1]);
             memset(buffer.get(), '\0', content_length + 1);
             FCGX_GetStr(buffer.get(), content_length, request.in);
-            onyx_request.setBody(buffer.get());
+            char * urldecode = onyx::urlDecode(buffer.get());
+            onyx_request.setBody(urldecode);
+            free(urldecode);
         }
         if (request_cookie)
             onyx_request.setCookies(request_cookie);
