@@ -54,7 +54,10 @@ namespace onyx {
         }
 
         void setBody(const std::string & body) {
-            m_body = body;
+            char * url_decode = curl_unescape(body.c_str(), body.size());
+            m_body = url_decode;
+            curl_free(url_decode);
+            
         }
 
         void setUrl(const char* url) {

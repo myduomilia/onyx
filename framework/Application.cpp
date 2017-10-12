@@ -61,9 +61,7 @@ void onyx::Application::handler() {
             std::unique_ptr<char[] > buffer(new char[content_length + 1]);
             memset(buffer.get(), '\0', content_length + 1);
             FCGX_GetStr(buffer.get(), content_length, request.in);
-            char * urldecode = onyx::urlDecode(buffer.get());
-            onyx_request.setBody(urldecode);
-            free(urldecode);
+            onyx_request.setBody(buffer.get());
         }
         if (request_cookie)
             onyx_request.setCookies(request_cookie);
