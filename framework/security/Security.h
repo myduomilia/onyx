@@ -18,6 +18,11 @@
 #include "../object/ONObject.h"
 
 namespace onyx {
+    
+    namespace security {
+        onyx::session::User CallbackUserEmpty(const std::string & login, const std::string & password);
+    }
+    
     class Security {
        
         
@@ -37,6 +42,8 @@ namespace onyx {
         static std::string auth(onyx::ONObject & obj);
         
     };
+    
+    
 }
 
 #endif
