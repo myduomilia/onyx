@@ -36,7 +36,7 @@ std::string onyx::Dispatcher::getResponseStr(const onyx::Request & request) cons
                     return response_with_csrf_token;
                 } else {
                     if (!cookies.has("sessionid")) {
-                        return onyx::RedirectResponse("Авторизация", onyx::Security::m_login_url);
+                        return onyx::RedirectResponse("Login", onyx::Security::m_login_url);
                     } else {
                         onyx::session::User user = onyx::Security::getUser(cookies["sessionid"]);
                         if (onyx::Application::m_csrf_token_enabled && request.getMethod() == "POST" && request.getContentType() == "application/x-www-form-urlencoded") {
