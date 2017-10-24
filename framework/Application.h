@@ -64,7 +64,7 @@ namespace onyx {
         static void init();
         static void run();
 
-        static void addRoute(const std::string &method, const std::string &regex, std::function<std::string(onyx::ONObject &)>, std::vector<std::string> roles) noexcept;
+        static void addRoute(const std::string &method, const std::string &regex, std::function<std::string(onyx::ONObject &)>, std::vector<std::string> roles = {}) noexcept;
         
         static void setCsrfTokenEnabled(bool csrf_token_enabled) {
             Application::m_csrf_token_enabled = csrf_token_enabled;

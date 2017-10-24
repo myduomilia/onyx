@@ -17,8 +17,25 @@ std::string onyx::Dispatcher::getResponseStr(const onyx::Request & request) cons
                 onyx::ParamCollection params(request.getParams());
                 onyx::CookieCollection cookies(request.getCookies());
                 onyx::ONObject obj(token, params, cookies, request.getBody());
-                if(!route.m_roles.size()){
+                if (!route.m_roles.size()) {
                     std::string response = route.m_function(obj);
+                    if (cookies.has("sessionid") && onyx::Application::m_csrf_token_enabled) {
+                        onyx::session::User user = onyx::Security::getUser(cookies["sessionid"]);
+                        unsigned char* digest;
+                        std::string user_id = user.getId();
+                        if (user_id == "") {
+                            kainjow::mustache::mustache tmpl{response};
+                            std::string response_with_csrf_token = tmpl.render({"csrf_token_value", ""});
+                            return response_with_csrf_token;
+                        }
+                        digest = HMAC(EVP_sha1(), onyx::Application::m_csrf_token_secret.data(), onyx::Application::m_csrf_token_secret.size(), (unsigned char*) user_id.data(), user_id.size(), NULL, NULL);
+                        char mdString[20];
+                        for (size_t i = 0; i < 20; i++)
+                            sprintf(&mdString[i * 2], "%02x", (unsigned int) digest[i]);
+                        kainjow::mustache::mustache tmpl{response};
+                        std::string response_with_csrf_token = tmpl.render({"csrf_token_value", mdString});
+                        return response_with_csrf_token;
+                    }
                     kainjow::mustache::mustache tmpl{response};
                     std::string response_with_csrf_token = tmpl.render({"csrf_token_value", ""});
                     return response_with_csrf_token;
@@ -38,7 +55,7 @@ std::string onyx::Dispatcher::getResponseStr(const onyx::Request & request) cons
                             char mdString[20];
                             for (size_t i = 0; i < 20; i++)
                                 sprintf(&mdString[i * 2], "%02x", (unsigned int) digest[i]);
-                            if(strcmp(csrf_token.data(), mdString) != 0)
+                            if (strcmp(csrf_token.data(), mdString) != 0)
                                 return onyx::handler::_403();
                         }
                         if (std::find(route.m_roles.begin(), route.m_roles.end(), user.getRole()) != route.m_roles.end()) {
