@@ -17,6 +17,7 @@
 #include <iostream>
 #include <openssl/hmac.h>
 #include "../common/mustache/mustache.h"
+#include <boost/algorithm/string/replace.hpp>
 
 #include <tuple>
 
