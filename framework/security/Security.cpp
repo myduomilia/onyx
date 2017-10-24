@@ -23,8 +23,8 @@ std::string onyx::Security::auth(onyx::ONObject& obj) {
         password = m["password"];
     onyx::session::User user = m_callbackUser(login, password);
     if (user.getId() == "")
-        return onyx::RedirectResponse("Авторизация", onyx::Security::m_login_url);
-    std::string response = onyx::RedirectResponse("Вход в приложение", m_redirect_url);
+        return onyx::RedirectResponse("Login", onyx::Security::m_login_url);
+    std::string response = onyx::RedirectResponse("Login", m_redirect_url);
     stream << "Set-Cookie: sessionid=" << boost::lexical_cast<std::string>(uuid) << "; expires=" << buff << "; HttpOnly;\r\n " << response;
     m_session_storage->createSession(boost::lexical_cast<std::string>(uuid), user.getId());
     return stream.str();
