@@ -20,12 +20,10 @@ std::string onyx::Dispatcher::getResponseStr(const onyx::Request & request) cons
                 if (!route.m_roles.size()) {
                     std::string response = route.m_function(obj);
                     if (cookies.has("sessionid") && onyx::Application::m_csrf_token_enabled) {
-                        onyx::session::User user = onyx::Security::getUser(cookies["sessionid"]);
+                        std::unique_ptr<onyx::Session> session = onyx::Security::m_session_storage->fetchSession(cookies["sessionid"]);
                         unsigned char* digest;
-                        std::string user_id = user.getId();
-                        if (user_id == "") 
-                            return response;
-                        digest = HMAC(EVP_sha1(), onyx::Application::m_csrf_token_secret.data(), onyx::Application::m_csrf_token_secret.size(), (unsigned char*) user_id.data(), user_id.size(), NULL, NULL);
+                        std::string token = session->getToken();
+                        digest = HMAC(EVP_sha1(), onyx::Application::m_csrf_token_secret.data(), onyx::Application::m_csrf_token_secret.size(), (unsigned char*) token.data(), token.size(), NULL, NULL);
                         char mdString[20];
                         for (size_t i = 0; i < 20; i++)
                             sprintf(&mdString[i * 2], "%02x", (unsigned int) digest[i]);
@@ -38,14 +36,15 @@ std::string onyx::Dispatcher::getResponseStr(const onyx::Request & request) cons
                         return onyx::RedirectResponse("Login", onyx::Security::m_login_url);
                     } else {
                         onyx::session::User user = onyx::Security::getUser(cookies["sessionid"]);
+                        std::unique_ptr<onyx::Session> session = onyx::Security::m_session_storage->fetchSession(cookies["sessionid"]);
                         if (onyx::Application::m_csrf_token_enabled && request.getMethod() == "POST") {
                             std::map<std::string, std::string> form_params = onyx::Request::parse_form_params(obj.getBody());
                             if (form_params.find("csrf_token") == form_params.end())
                                 return onyx::handler::_403();
                             std::string csrf_token = form_params["csrf_token"];
                             unsigned char* digest;
-                            std::string user_id = user.getId();
-                            digest = HMAC(EVP_sha1(), onyx::Application::m_csrf_token_secret.data(), onyx::Application::m_csrf_token_secret.size(), (unsigned char*) user_id.data(), user_id.size(), NULL, NULL);
+                            std::string token = session->getToken();
+                            digest = HMAC(EVP_sha1(), onyx::Application::m_csrf_token_secret.data(), onyx::Application::m_csrf_token_secret.size(), (unsigned char*) token.data(), token.size(), NULL, NULL);
                             char mdString[20];
                             for (size_t i = 0; i < 20; i++)
                                 sprintf(&mdString[i * 2], "%02x", (unsigned int) digest[i]);
@@ -56,8 +55,12 @@ std::string onyx::Dispatcher::getResponseStr(const onyx::Request & request) cons
                             std::string response = route.m_function(obj);
                             if (onyx::Application::m_csrf_token_enabled) {
                                 unsigned char* digest;
-                                std::string user_id = user.getId();
-                                digest = HMAC(EVP_sha1(), onyx::Application::m_csrf_token_secret.data(), onyx::Application::m_csrf_token_secret.size(), (unsigned char*) user_id.data(), user_id.size(), NULL, NULL);
+                                std::string token = session->getToken();
+                                if(token == ""){
+                                    boost::replace_all(response, "%%csrf_token_value%%", "");
+                                    return response;
+                                }
+                                digest = HMAC(EVP_sha1(), onyx::Application::m_csrf_token_secret.data(), onyx::Application::m_csrf_token_secret.size(), (unsigned char*) token.data(), token.size(), NULL, NULL);
                                 char mdString[20];
                                 for (size_t i = 0; i < 20; i++)
                                     sprintf(&mdString[i * 2], "%02x", (unsigned int) digest[i]);
