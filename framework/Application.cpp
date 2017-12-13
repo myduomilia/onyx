@@ -72,7 +72,7 @@ void onyx::Application::handler() {
         onyx_request.setContentType(request_content_type);
         try {
             std::string response_str = m_dispatcher->getResponseStr(onyx_request);
-            FCGX_PutS(response_str.c_str(), request.out);
+            FCGX_PutStr(response_str.c_str(), response_str.size(), request.out);
             LOGI << "Request " << onyx_request.getUrl() << " processed";
         } catch (onyx::Exception & ex) {
             LOGE << ex.what();
