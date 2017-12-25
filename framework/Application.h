@@ -58,6 +58,7 @@ namespace onyx {
         static std::string m_socket_path;
         static std::string m_log_file_path;
         static size_t m_thread_count;
+        static std::string m_mode;
         static bool m_csrf_token_enabled;
         static std::string m_csrf_token_secret;
 
