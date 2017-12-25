@@ -19,8 +19,8 @@ namespace onyx {
             std::string m_role;
         public:
 
-            User(std::string m_id, std::string m_role) :
-            m_id(m_id), m_role(m_role) {
+            User(const std::string & id, const std::string & role) :
+            m_id(id), m_role(role) {
             }
 
             std::string getId() const {
@@ -30,28 +30,33 @@ namespace onyx {
             std::string getRole() const {
                 return m_role;
             }
-
+            
         };
     }
 
     class Session {
     private:
         std::string m_id;
+        std::string m_token;
         onyx::session::User m_user;
     public:
 
-        Session(const std::string & id, onyx::session::User user) : m_id(id), m_user(user) {
+        Session(const std::string & id, const std::string & token, onyx::session::User user) : m_id(id), m_token(token), m_user(user) {
         }
 
         onyx::session::User getUser() const {
             return m_user;
+        }
+        
+        std::string getToken() const {
+            return m_token;
         }
 
     };
 
     class SessionStorage {
     public:
-        virtual void createSession(const std::string & id, const std::string & user_id) noexcept = 0;
+        virtual void createSession(const std::string & id, const std::string & token, const std::string & user_id) noexcept = 0;
         virtual std::unique_ptr<Session> fetchSession(const std::string & id) noexcept = 0;
         virtual void removeSession(const std::string & id) noexcept = 0;
         virtual void clearAllSession() noexcept = 0;
@@ -59,13 +64,13 @@ namespace onyx {
 
     class SessionStorageEmpty : public SessionStorage {
 
-        virtual void createSession(const std::string & id, const std::string & user_id) noexcept override {
+        virtual void createSession(const std::string & id, const std::string & token, const std::string & user_id) noexcept override {
 
         };
 
         virtual std::unique_ptr<onyx::Session> fetchSession(const std::string & id) noexcept override {
             onyx::session::User user("", "");
-            return std::unique_ptr<onyx::Session>(new onyx::Session("", user));
+            return std::unique_ptr<onyx::Session>(new onyx::Session("", "", user));
         };
 
         virtual void removeSession(const std::string & id) noexcept override {
