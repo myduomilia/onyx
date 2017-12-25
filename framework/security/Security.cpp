@@ -11,6 +11,7 @@ std::function<onyx::session::User(const std::string & login, const std::string &
 std::string onyx::Security::auth(onyx::ONObject& obj) {
     std::stringstream stream;
     boost::uuids::uuid uuid = boost::uuids::random_generator()();
+    boost::uuids::uuid token = boost::uuids::random_generator()();
     time_t expires = time(NULL) + 60 * 60 * 24 * 30;
     char buff[40];
     strftime(buff, sizeof (buff), "%a, %d-%b-%Y %H:%M:%S", localtime(&expires));
@@ -26,7 +27,7 @@ std::string onyx::Security::auth(onyx::ONObject& obj) {
         return onyx::RedirectResponse("Login", onyx::Security::m_login_url);
     std::string response = onyx::RedirectResponse("Login", m_redirect_url);
     stream << "Set-Cookie: sessionid=" << boost::lexical_cast<std::string>(uuid) << "; expires=" << buff << "; HttpOnly;\r\n " << response;
-    m_session_storage->createSession(boost::lexical_cast<std::string>(uuid), user.getId());
+    m_session_storage->createSession(boost::lexical_cast<std::string>(uuid), boost::lexical_cast<std::string>(token), user.getId());
     return stream.str();
 }
 
