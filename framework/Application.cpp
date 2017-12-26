@@ -126,6 +126,9 @@ void onyx::Application::setConfig(const std::string & path_config_file) {
             if (m_thread_count <= 0)
                 m_thread_count = 1;
         }
+        m_mode_debug = true;
+        if (settings.find("debug") != settings.end())
+            m_mode_debug = settings["debug"].get<bool>();
     } catch (...) {
         printf("%s\n", "Invalid format of configuration file. Application stopped");
         exit(EXIT_FAILURE);
@@ -144,7 +147,10 @@ void onyx::Application::init() {
     setConfig("settings.json");
     if (m_log_file_path != "")
         m_file_log_appender = std::unique_ptr<plog::RollingFileAppender < plog::TxtFormatter >> (new plog::RollingFileAppender<plog::TxtFormatter>(m_log_file_path.c_str(), 10000000, 10));
-    plog::init(plog::debug, m_file_log_appender.get()).addAppender(m_console_log_appender.get());
+    if(m_mode_debug)
+        plog::init(plog::debug, m_file_log_appender.get()).addAppender(m_console_log_appender.get());
+    else
+        plog::init(plog::info, m_file_log_appender.get()).addAppender(m_console_log_appender.get());
     if (m_socket_path == "") {
         LOGE << "Unix socket file is undefined. Application stoped";
         exit(EXIT_FAILURE);
