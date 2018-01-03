@@ -1,6 +1,6 @@
 CC=g++
 CFLAGS = -c -Wall -std=c++14 -fPIC
-LDFLAGS = -lfcgi -lpthread -lcurl -lssl -lcrypto
+LDFLAGS = -lfcgi -lpthread -lcurl -lssl
 
 SOURCES = framework/dispatcher/Dispatcher.cpp\
     framework/token/Token.cpp\
