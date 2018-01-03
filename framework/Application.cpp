@@ -5,26 +5,25 @@
 #include "response/JsonResponse.h"
 #include "dispatcher/Dispatcher.h"
 
-int onyx::Application::m_socket_id;
-std::vector<std::thread> onyx::Application::m_threads;
-
-std::unique_ptr<onyx::Dispatcher> onyx::Application::m_dispatcher(new Dispatcher);
-
-bool onyx::Application::m_csrf_token_enabled = true;
-std::string onyx::Application::m_csrf_token_secret = "";
-
-std::mutex onyx::Application::m_mutex_class;
-std::unique_ptr<plog::RollingFileAppender<plog::TxtFormatter>> onyx::Application::m_file_log_appender(nullptr);
-std::unique_ptr<plog::ColorConsoleAppender<plog::TxtFormatter>> onyx::Application::m_console_log_appender(new plog::ColorConsoleAppender<plog::TxtFormatter>);
-
-std::string onyx::Application::m_socket_path;
-std::string onyx::Application::m_log_file_path;
-size_t onyx::Application::m_thread_count = 8;
+onyx::Application::Application() {
+    m_file_log_appender = nullptr;
+    m_console_log_appender = new plog::ColorConsoleAppender<plog::TxtFormatter>;
+    m_dispatcher = onyx::Dispatcher::getInstance();
+    init();
+}
 
 void onyx::Application::run() {
+    onyx::Security * security = m_dispatcher->getSecurity();
+    
+    if (security->getCallbackUser() == nullptr || security->getSessionStorage() == nullptr) {
+        std::cerr << "CallbackRole function or session storage are undefined. Application stoped" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    LOGI << "ONYX started success";
 
     for (size_t i = 0; i < m_thread_count; i++)
-        m_threads.push_back(std::thread(handler));
+        m_threads.push_back(std::thread(&Application::handler, this));
 
     for (auto& thread : m_threads)
         thread.join();
@@ -37,9 +36,9 @@ void onyx::Application::handler() {
     if (FCGX_InitRequest(&request, m_socket_id, 0) != 0)
         return;
     for (;;) {
-        m_mutex_class.lock();
+        m_mutex_instance.lock();
         rc = FCGX_Accept_r(&request);
-        m_mutex_class.unlock();
+        m_mutex_instance.unlock();
 
         if (rc < 0)
             continue;
@@ -53,7 +52,7 @@ void onyx::Application::handler() {
         const char * request_params = FCGX_GetParam("QUERY_STRING", request.envp);
         char * content_length_str = FCGX_GetParam("CONTENT_LENGTH", request.envp);
         size_t content_length = strtol(content_length_str, &content_length_str, 10);
-        
+
         onyx::Request onyx_request;
 
         if (content_length > 0) {
@@ -64,19 +63,14 @@ void onyx::Application::handler() {
         }
         if (request_cookie)
             onyx_request.setCookies(request_cookie);
-        std::string url = prepare_url(request_url);
+        std::string url = fetchEmptyURL(request_url);
         onyx_request.setUrl(url.c_str());
         onyx_request.setIp(request_ip_address);
         onyx_request.setMethod(request_method);
         onyx_request.setParams(request_params);
         onyx_request.setContentType(request_content_type);
-        try {
-            std::string response_str = m_dispatcher->getResponseStr(onyx_request);
-            FCGX_PutStr(response_str.c_str(), response_str.size(), request.out);
-            LOGI << "Request " << onyx_request.getUrl() << " processed";
-        } catch (onyx::Exception & ex) {
-            LOGE << ex.what();
-        }
+        std::string response_str = m_dispatcher->getResponseStr(onyx_request);
+        FCGX_PutStr(response_str.c_str(), response_str.size(), request.out);
         FCGX_Finish_r(&request);
     }
     return;
@@ -92,22 +86,22 @@ void onyx::Application::addRoute(const std::string& method, const std::string& r
     int err;
     err = regcomp(&route.m_preg, route.m_regex.c_str(), REG_EXTENDED);
     if (err != 0) {
-        char buf[512];
+        char buf[1024];
         regerror(err, &route.m_preg, buf, sizeof (buf));
         LOGE << buf;
     } else {
-        m_dispatcher->m_routes.push_back(route);
+        m_dispatcher->addRoute(route);
     }
 }
 
-void onyx::Application::setConfig(const std::string & path_config_file) {
+void onyx::Application::setAppSettings(const std::string & path_config_file) {
     FILE* f = fopen(path_config_file.c_str(), "r");
     if (f == NULL) {
-        printf("%s\n", "Can't open configuration file. Application stopped");
+        std::cerr << "Can't open configuration file. Application stopped" << std::endl;
         exit(EXIT_FAILURE);
     }
     std::string data;
-    char buffer[1000];
+    char buffer[1024 * 16];
     memset(buffer, '\0', sizeof (buffer));
     while (fgets(buffer, sizeof (buffer), f) != NULL) {
         data += std::string(buffer);
@@ -121,58 +115,50 @@ void onyx::Application::setConfig(const std::string & path_config_file) {
             m_socket_path = settings["unix_socket"].get<std::string>();
         if (settings.find("log") != settings.end())
             m_log_file_path = settings["log"].get<std::string>();
-        if (settings.find("threads") != settings.end()) {
+        if (settings.find("threads") != settings.end())
             m_thread_count = settings["threads"].get<int>();
-            if (m_thread_count <= 0)
-                m_thread_count = 1;
-        }
-        m_mode = "production";
-        if (settings.find("mode") != settings.end())
-            m_mode = settings["mode"].get<std::string>();
+        m_mode_debug = false;
+        if (settings.find("debug") != settings.end())
+            m_mode_debug = settings["debug"].get<bool>();
     } catch (...) {
-        printf("%s\n", "Invalid format of configuration file. Application stopped");
+        std::cerr << "Invalid format of configuration file. Application stopped" << std::endl;
         exit(EXIT_FAILURE);
     }
 }
 
 void onyx::Application::init() {
-    if(onyx::Security::m_callbackUser == nullptr || onyx::Security::m_session_storage == nullptr){
-        LOGE << "CallbackRole function or session storage are undefined. Application stoped";
-        exit(EXIT_FAILURE);
-    }
-    if(m_csrf_token_enabled && m_csrf_token_secret == ""){
-        LOGE << "Secret token didn't set. Application stoped";
-        exit(EXIT_FAILURE);
-    }
-    setConfig("settings.json");
+
+    onyx::Security * security = m_dispatcher->getSecurity();
+    
+    setAppSettings("settings.json");
     if (m_log_file_path != "")
-        m_file_log_appender = std::unique_ptr<plog::RollingFileAppender < plog::TxtFormatter >> (new plog::RollingFileAppender<plog::TxtFormatter>(m_log_file_path.c_str(), 10000000, 10));
-    if(m_mode == "debug")
-        plog::init(plog::debug, m_file_log_appender.get()).addAppender(m_console_log_appender.get());
+        m_file_log_appender = new plog::RollingFileAppender<plog::TxtFormatter>(m_log_file_path.c_str(), 10000000, 10);
+    if (m_mode_debug)
+        plog::init(plog::debug, m_file_log_appender).addAppender(m_console_log_appender);
     else
-        plog::init(plog::info, m_file_log_appender.get()).addAppender(m_console_log_appender.get());
+        plog::init(plog::info, m_file_log_appender).addAppender(m_console_log_appender);
     if (m_socket_path == "") {
-        LOGE << "Unix socket file is undefined. Application stoped";
+        std::cerr << "Unix socket file is undefined. Application stoped" << std::endl;
         exit(EXIT_FAILURE);
     }
     FCGX_Init();
-    m_socket_id = FCGX_OpenSocket(m_socket_path.c_str(), 32);
+    m_socket_id = FCGX_OpenSocket(m_socket_path.c_str(), 512);
     char buf[1024];
     snprintf(buf, sizeof (buf), "chmod a+w %s", m_socket_path.c_str());
     int res = system(buf);
     if (res != 0) {
-        LOGE << "Can't change mode access of socket file";
+        std::cerr << "Can't change mode access of socket file. Application stoped" << std::endl;
         exit(EXIT_FAILURE);
     }
     if (m_socket_id < 0) {
-        LOGE << "Can't create socket";
+        std::cerr << "Can't create socket. Application stoped" << std::endl;
         exit(EXIT_FAILURE);
     }
-    Application::addRoute("POST", "^" + onyx::Security::m_auth_url + "$", onyx::Security::auth);
-    LOGI << "ONYX started success";
-
+    std::string regex = "^" + security->getAuthURL() + "$";
+    addRoute("POST", regex, security->fetchAuthHandler());
 }
-std::string onyx::Application::prepare_url(const char * url) noexcept {
+
+std::string onyx::Application::fetchEmptyURL(const char * url) noexcept {
     std::string prepare(url);
     int ind = strlen(url) - 1;
     while (ind > 0) {

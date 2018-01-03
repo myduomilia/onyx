@@ -12,7 +12,6 @@ Linux
 ```bash
 libfcgi-dev
 libboost-all-dev
-libssl-dev
 ```
 
 ```bash
