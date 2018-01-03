@@ -44,7 +44,7 @@ std::string onyx::Dispatcher::getResponseStr(const onyx::Request & request) cons
                 if (!route.m_roles.empty() && std::find(route.m_roles.begin(), route.m_roles.end(), user.getRole()) == route.m_roles.end()) {
                     return onyx::handler::_403();
                 }
-                // Заполняем все токены (csrf_token_value), согласно секретному ключу, должна быть найдена сессия
+                // Заполняем все токены (csrf_token_value), должна быть найдена сессия
                 std::string response = route.m_function(obj);
                 if (m_csrf_token_enabled && session) 
                     boost::replace_all(response, "%%csrf_token_value%%", session->getToken());
