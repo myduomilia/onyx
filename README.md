@@ -12,12 +12,13 @@ Linux
 ```bash
 libfcgi-dev
 libboost-all-dev
+libcurl4-openssl-dev
 ```
 
 ```bash
 make clean
 make
-sudo make install
+make install
 ```
 ## Использую:
 * Логирование  - https://github.com/SergiusTheBest/plog
