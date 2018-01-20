@@ -11,7 +11,10 @@ SOURCES = framework/dispatcher/Dispatcher.cpp\
     framework/handlers/403.cpp\
     framework/session/Session.cpp\
     framework/security/Security.cpp\
-    framework/Application.cpp
+    framework/Application.cpp\
+    framework/dispatcher/FiltersChain/FilterChainCheckRole.cpp\
+    framework/dispatcher/FiltersChain/FilterChainPost.cpp\
+    framework/dispatcher/FiltersChain/FilterChainGet.cpp
     
 	
 OBJECTS = $(SOURCES:.cpp=.o)
