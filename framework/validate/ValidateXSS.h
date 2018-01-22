@@ -2,7 +2,9 @@
 #define VALIDATEXSS_H
 
 #include <boost/regex.hpp>
+#include <boost/algorithm/string/replace.hpp>
 #include <string>
+#include <sstream>
 
 namespace onyx {
     namespace validate {
@@ -11,7 +13,8 @@ namespace onyx {
         private:
             ValidateXSS(){}
         public:
-            static std::string stripXSS(std::string & source);
+            static std::string stripXSS(const std::string & source);
+            static std::string escapeXSS(const std::string & source);
         };
 
     }
