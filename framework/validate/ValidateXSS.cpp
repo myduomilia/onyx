@@ -21,7 +21,7 @@ std::string onyx::validate::ValidateXSS::stripXSS(const std::string & source) {
     re = boost::regex("vbscript:");
     dest = boost::regex_replace(dest, re, "|");
     re = boost::regex("onload(.*?)=");
-    dest = boost::regex_replace(source, re, "|");
+    dest = boost::regex_replace(dest, re, "|");
     return dest;
 }
 
