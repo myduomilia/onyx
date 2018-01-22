@@ -1,27 +1,45 @@
-#include <boost/algorithm/string/replace.hpp>
-
 #include "ValidateXSS.h"
 
-std::string onyx::validate::ValidateXSS::stripXSS(std::string & source) {
+std::string onyx::validate::ValidateXSS::stripXSS(const std::string & source) {
+    std::string dest;
     boost::regex re("<script>(.*?)</script>");
-    source = boost::regex_replace(source, re, "|");
+    dest = boost::regex_replace(source, re, "|");
     re = boost::regex("src[\r\n]*=[\r\n]*\\\'(.*?)\\\'");
-    source = boost::regex_replace(source, re, "|");
+    dest = boost::regex_replace(dest, re, "|");
     re = boost::regex("src[\r\n]*=[\r\n]*\\\"(.*?)\\\"");
-    source = boost::regex_replace(source, re, "|");
+    dest = boost::regex_replace(dest, re, "|");
     re = boost::regex("</script>");
-    source = boost::regex_replace(source, re, "|");
+    dest = boost::regex_replace(source, re, "|");
     re = boost::regex("<script(.*?)>");
-    source = boost::regex_replace(source, re, "|");
+    dest = boost::regex_replace(source, re, "|");
     re = boost::regex("eval\\((.*?)\\)");
-    source = boost::regex_replace(source, re, "|");
+    dest = boost::regex_replace(source, re, "|");
     re = boost::regex("expression\\((.*?)\\)");
-    source = boost::regex_replace(source, re, "|");
+    dest = boost::regex_replace(source, re, "|");
     re = boost::regex("javascript:");
-    source = boost::regex_replace(source, re, "|");
+    dest = boost::regex_replace(source, re, "|");
     re = boost::regex("vbscript:");
-    source = boost::regex_replace(source, re, "|");
+    dest = boost::regex_replace(source, re, "|");
     re = boost::regex("onload(.*?)=");
-    source = boost::regex_replace(source, re, "|");
+    dest = boost::regex_replace(source, re, "|");
     return source;
+}
+
+std::string onyx::validate::ValidateXSS::escapeXSS(const std::string& source) {
+    std::stringstream dest;
+    for(size_t i = 0; i < source.length(); i++){
+        if(source[i] == '&')
+            dest << "&amp;";
+        if(source[i] == '<')
+            dest << "&lt;";
+        if(source[i] == '>')
+            dest << "&gt;";
+        if(source[i] == '"')
+            dest << "&quot;";
+        if(source[i] == '\'')
+            dest << "&#39;";
+        else 
+            dest << source[i];
+    }
+    return dest.str();
 }
