@@ -30,13 +30,13 @@ std::string onyx::validate::ValidateXSS::escapeXSS(const std::string& source) {
     for(size_t i = 0; i < source.length(); i++){
         if(source[i] == '&')
             dest << "&amp;";
-        if(source[i] == '<')
+        else if(source[i] == '<')
             dest << "&lt;";
-        if(source[i] == '>')
+        else if(source[i] == '>')
             dest << "&gt;";
-        if(source[i] == '"')
+        else if(source[i] == '"')
             dest << "&quot;";
-        if(source[i] == '\'')
+        else if(source[i] == '\'')
             dest << "&#39;";
         else 
             dest << source[i];
