@@ -1,6 +1,6 @@
 CC=g++
 CFLAGS = -c -Wall -std=c++14 -fPIC
-LDFLAGS = -lfcgi -lpthread -lcurl
+LDFLAGS = -lfcgi -lpthread -lcurl -lboost_system -lboost_filesystem -lboost_regex
 
 SOURCES = framework/dispatcher/Dispatcher.cpp\
     framework/token/Token.cpp\
@@ -11,7 +11,11 @@ SOURCES = framework/dispatcher/Dispatcher.cpp\
     framework/handlers/403.cpp\
     framework/session/Session.cpp\
     framework/security/Security.cpp\
-    framework/Application.cpp
+    framework/Application.cpp\
+    framework/dispatcher/FiltersChain/FilterChainCheckRole.cpp\
+    framework/dispatcher/FiltersChain/FilterChainPost.cpp\
+    framework/dispatcher/FiltersChain/FilterChainGet.cpp\
+    framework/validate/ValidateXSS.cpp
     
 	
 OBJECTS = $(SOURCES:.cpp=.o)
@@ -45,9 +49,11 @@ install:
 	@if [ ! -d /usr/include/onyx/session ]; then mkdir /usr/include/onyx/session; fi
 	@if [ ! -d /usr/include/onyx/handlers ]; then mkdir /usr/include/onyx/handlers; fi
 	@if [ ! -d /usr/include/onyx/security ]; then mkdir /usr/include/onyx/security; fi
+	@if [ ! -d /usr/include/onyx/validate ]; then mkdir /usr/include/onyx/validate; fi
 	@if [ ! -d /var/log/onyx ]; then mkdir /var/log/onyx; fi
 	cp framework/Application.h /usr/include/onyx/
 	cp framework/dispatcher/Dispatcher.h /usr/include/onyx/dispatcher/
+	cp framework/validate/ValidateXSS.h /usr/include/onyx/validate/
 	cp framework/exception/Exception.h /usr/include/onyx/exception/
 	cp framework/request/Request.h /usr/include/onyx/request/
 	cp framework/response/BaseResponse.h /usr/include/onyx/response/
