@@ -26,7 +26,7 @@ const std::function<std::string(onyx::ONObject &)> onyx::Security::fetchAuthHand
         std::string login = "";
         std::string password = "";
         if (m.find("login") != m.end())
-            login = m["login"];
+            m["login"];
         if (m.find("password") != m.end())
             password = m["password"];
         std::unique_ptr<onyx::session::User> user(security->getCallbackUser()(login, password));

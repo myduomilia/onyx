@@ -17,6 +17,7 @@
 #include "../response/RedirectResponse.h"
 #include "../object/ONObject.h"
 #include "../session/Session.h"
+#include "../validate/ValidateXSS.h"
 
 namespace onyx {
     
