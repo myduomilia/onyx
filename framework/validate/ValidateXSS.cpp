@@ -22,7 +22,7 @@ std::string onyx::validate::ValidateXSS::stripXSS(const std::string & source) {
     dest = boost::regex_replace(source, re, "|");
     re = boost::regex("onload(.*?)=");
     dest = boost::regex_replace(source, re, "|");
-    return source;
+    return dest;
 }
 
 std::string onyx::validate::ValidateXSS::escapeXSS(const std::string& source) {
