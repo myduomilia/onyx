@@ -14,7 +14,7 @@ onyx::Application::Application() {
 
 void onyx::Application::run() {
     onyx::Security * security = m_dispatcher->getSecurity();
-    
+
     if (security->getCallbackUser() == nullptr || security->getSessionStorage() == nullptr) {
         std::cerr << "CallbackRole function or session storage are undefined. Application stoped" << std::endl;
         exit(EXIT_FAILURE);
@@ -113,6 +113,8 @@ void onyx::Application::setAppSettings(const std::string & path_config_file) {
         settings = json::parse(data);
         if (settings.find("unix_socket") != settings.end())
             m_socket_path = settings["unix_socket"].get<std::string>();
+        if (settings.find("domain_unix_socket") != settings.end())
+            m_domain_socket = settings["domain_unix_socket"].get<std::string>();
         if (settings.find("log") != settings.end())
             m_log_file_path = settings["log"].get<std::string>();
         if (settings.find("threads") != settings.end())
@@ -129,7 +131,7 @@ void onyx::Application::setAppSettings(const std::string & path_config_file) {
 void onyx::Application::init() {
 
     onyx::Security * security = m_dispatcher->getSecurity();
-    
+
     setAppSettings("settings.json");
     if (m_log_file_path != "")
         m_file_log_appender = new plog::RollingFileAppender<plog::TxtFormatter>(m_log_file_path.c_str(), 10000000, 10);
@@ -137,23 +139,33 @@ void onyx::Application::init() {
         plog::init(plog::debug, m_file_log_appender).addAppender(m_console_log_appender);
     else
         plog::init(plog::info, m_file_log_appender).addAppender(m_console_log_appender);
-    if (m_socket_path == "") {
-        std::cerr << "Unix socket file is undefined. Application stoped" << std::endl;
+    if (m_socket_path == "" && m_domain_socket == "") {
+        std::cerr << "Unix socket file and Domain Socket are undefined. Application stoped" << std::endl;
         exit(EXIT_FAILURE);
     }
     FCGX_Init();
-    m_socket_id = FCGX_OpenSocket(m_socket_path.c_str(), 512);
-    char buf[1024];
-    snprintf(buf, sizeof (buf), "chmod a+w %s", m_socket_path.c_str());
-    int res = system(buf);
-    if (res != 0) {
-        std::cerr << "Can't change mode access of socket file. Application stoped" << std::endl;
-        exit(EXIT_FAILURE);
+    if (m_socket_path != "") {
+        m_socket_id = FCGX_OpenSocket(m_socket_path.c_str(), 512);
+        char buf[1024];
+        snprintf(buf, sizeof (buf), "chmod a+w %s", m_socket_path.c_str());
+        int res = system(buf);
+        if (res != 0) {
+            std::cerr << "Can't change mode access of socket file. Application stoped" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        if (m_socket_id < 0) {
+            std::cerr << "Can't create socket. Application stoped" << std::endl;
+            exit(EXIT_FAILURE);
+        }
     }
-    if (m_socket_id < 0) {
-        std::cerr << "Can't create socket. Application stoped" << std::endl;
-        exit(EXIT_FAILURE);
+    if (m_domain_socket != "") {
+        m_socket_id = FCGX_OpenSocket(m_socket_path.c_str(), 512);
+        if (m_socket_id < 0) {
+            std::cerr << "Can't create socket. Application stoped" << std::endl;
+            exit(EXIT_FAILURE);
+        }
     }
+
     std::string regex = "^" + security->getAuthURL() + "$";
     addRoute("POST", regex, security->fetchAuthHandler());
 }
