@@ -72,5 +72,5 @@ install:
 	cp framework/handlers/404.h /usr/include/onyx/handlers/
 	cp framework/handlers/403.h /usr/include/onyx/handlers/
 	cp -r framework/common /usr/include/onyx/
-	sudo ldconfig
+	ldconfig
 	
