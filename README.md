@@ -1,13 +1,13 @@
 # ONYX
 
-Микрофрейворк для разработки web приложений на С++
+Micro framework for developing web applications
 
-## Поддерживаемые операционные системы
+## Supported OS
 Linux
 
-## Установка
+## Install
 
-### Необходимые библиотеки
+### Required libraries
 
 ```bash
 libfcgi-dev
@@ -20,7 +20,7 @@ make clean
 make
 make install
 ```
-## Использую:
-* Логирование  - https://github.com/SergiusTheBest/plog
-* Работа с JSON - https://github.com/nlohmann/json
-* Рендеринг шаблонов - https://github.com/kainjow/Mustache
+## Using:
+* Logging  - https://github.com/SergiusTheBest/plog
+* JSON - https://github.com/nlohmann/json
+* Rendering templates - https://github.com/kainjow/Mustache
