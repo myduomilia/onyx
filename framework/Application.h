@@ -44,6 +44,7 @@ namespace onyx {
     private:
         
         std::string m_socket_path; ///< Путь к файлу сокета
+        std::string m_domain_socket; ///< Путь к файлу сокета
         std::string m_log_file_path; ///< Путь к файлу логов
         size_t m_thread_count; ///< Количество потоков приложения
         bool m_mode_debug; ///< Флаг режима дебаг
