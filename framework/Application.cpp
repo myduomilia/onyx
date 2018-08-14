@@ -159,7 +159,7 @@ void onyx::Application::init() {
         }
     }
     if (m_domain_socket != "") {
-        m_socket_id = FCGX_OpenSocket(m_socket_path.c_str(), 512);
+        m_socket_id = FCGX_OpenSocket(m_domain_socket.c_str(), 512);
         if (m_socket_id < 0) {
             std::cerr << "Can't create socket. Application stoped" << std::endl;
             exit(EXIT_FAILURE);
