@@ -12,7 +12,7 @@
 #include "../common/plog/Log.h"
 
 namespace onyx {
-
+    
     class ParamCollection {
     private:
         std::map<std::string, std::string> m_params;

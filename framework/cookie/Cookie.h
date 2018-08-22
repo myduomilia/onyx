@@ -8,6 +8,10 @@
 #include "../common/utils.h"
 
 namespace onyx {
+    
+    /*
+     * Parse the string raw cookies and create map cookies
+    */
 
     class CookieCollection {
     private:

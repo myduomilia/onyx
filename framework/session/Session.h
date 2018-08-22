@@ -13,37 +13,19 @@ namespace onyx {
 
     namespace session {
 
-        /**
-        \brief Класс представляющий пользователя сессии
-        \author myduomilia
-        \date Январь 2018
-         */
-
         class User {
         private:
             std::string m_id;
             std::string m_role;
         public:
 
-            /**
-             По умолчанию пользователь создается с пустым ID и пустой ролью.
-             \param[in] id - внешний индентификатор пользователя
-             \param[in] role - роль (доступ) пользователя в системе
-             \warning Пользователь с пустый ID считается обыкновенным пользователем
-             */
             User(const std::string & id = "", const std::string & role = "") : m_id(id), m_role(role) {
             }
 
-            /**
-            \return Возвращает идентификатор пользователя
-             */
             std::string getId() const {
                 return m_id;
             }
 
-            /**
-            \return Возвращает роль пользователя
-             */
             std::string getRole() const {
                 return m_role;
             }

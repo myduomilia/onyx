@@ -11,6 +11,10 @@
 #include "../common/plog/Log.h"
 
 namespace onyx {
+    
+    /*
+     * Parse the string raw url and create vector tokens
+    */
 
     class TokenCollection {
     private:
