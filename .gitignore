@@ -2,6 +2,3 @@ build/*
 nbproject/*
 *.o
 *~
-
-/docs/latex/
-/docs/html/
