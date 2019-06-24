@@ -63,6 +63,7 @@ install:
 	cp framework/response/Response403.h /usr/include/onyx/response/
 	cp framework/response/Response404.h /usr/include/onyx/response/
 	cp framework/response/XmlResponse.h /usr/include/onyx/response/
+	cp framework/response/CsvResponse.h /usr/include/onyx/response/
 	cp framework/response/RedirectResponse.h /usr/include/onyx/response/
 	cp framework/response/PlainTextResponse.h /usr/include/onyx/response/
 	cp framework/session/Session.h /usr/include/onyx/session/
