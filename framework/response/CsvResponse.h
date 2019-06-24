@@ -7,7 +7,7 @@ namespace onyx {
     public:
 
         explicit CsvResponse(const std::string & body) :
-        BaseResponse("Content-type: application/csv; charset=utf-8\r\n\r\n") {
+        BaseResponse("Content-Disposition: attachment; Content-type: application/csv; charset=utf-8\r\n\r\n") {
             m_body = body;
         }
     };
