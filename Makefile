@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS = -c -Wall -std=c++14 -fPIC
+CFLAGS = -c -g1 -Wall -std=c++14 -fPIC
 LDFLAGS = -lfcgi -lpthread -lcurl -lboost_system -lboost_filesystem -lboost_regex
 
 SOURCES = framework/dispatcher/Dispatcher.cpp\
